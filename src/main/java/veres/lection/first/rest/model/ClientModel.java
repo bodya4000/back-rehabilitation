@@ -1,20 +1,19 @@
 package veres.lection.first.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
-public class ClientModel implements Model{
+public class ClientModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -33,18 +32,26 @@ public class ClientModel implements Model{
     @Column
     private String healthState;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "specialist_id")
-    @JsonIgnoreProperties({"specialist_id", "clients"})
-    private SpecialistModel specialistModel;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "clients_specialists",
+            joinColumns = {
+                    @JoinColumn(
+                            name = "client_id"
+                    )},
+            inverseJoinColumns = {
+                    @JoinColumn(
+                            name = "specialist_id"
+                    )})
+    @JsonIgnoreProperties({"clients"})
+    private Set<SpecialistModel> specialists;
 
     public ClientModel() {
-        this.firstName = "default";
-        this.lastName = "default";
-        this.login = "default" + id;
-        this.address = "default";
-        this.email = "default";
-        this.phoneNumber = "0997622482";
-        this.healthState = "default";
+        this.specialists = new HashSet<>();
+    }
+
+    public void addSpecialist(SpecialistModel specialist) {
+        specialists.add(specialist);
+        specialist.getClients().add(this);
     }
 }
