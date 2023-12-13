@@ -1,10 +1,10 @@
-package veres.lection.first.rest.controller;
+package rehabilitation.api.service.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import veres.lection.first.rest.exception.NotFoundIdException;
+import rehabilitation.api.service.exception.NotFoundIdException;
 
 @ControllerAdvice
 public class ExceptionController {

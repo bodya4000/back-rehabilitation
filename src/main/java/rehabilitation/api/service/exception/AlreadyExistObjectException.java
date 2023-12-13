@@ -1,4 +1,4 @@
-package veres.lection.first.rest.exception;
+package rehabilitation.api.service.exception;
 
 public class AlreadyExistObjectException extends Exception{
     public AlreadyExistObjectException(String message) {

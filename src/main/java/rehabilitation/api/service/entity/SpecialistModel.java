@@ -1,4 +1,4 @@
-package veres.lection.first.rest.model;
+package rehabilitation.api.service.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
@@ -7,22 +7,21 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Setter@Getter
+//@ToString(exclude = "clients")
 @ToString
+//@EqualsAndHashCode(of = "login")
+@Setter@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "specialists")
 @Entity
 public class SpecialistModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String login;
     @Column
     private String firstName;
     @Column
     private String lastName;
-    @Column
-    private String login;
     @Column
     private String type;
     @Column
@@ -35,18 +34,27 @@ public class SpecialistModel {
     private int rate;
     @Column
     private String description;
+    @Column
+    private String imgUrl;
 
-    @ManyToMany(mappedBy = "specialists", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"specialists"})
+    @ManyToMany(mappedBy = "specialists", fetch = FetchType.LAZY)
     private Set<ClientModel> clients = new HashSet<>();
 
-    @JoinColumn(name = "re_hub")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "re_hub_login")
+    @JsonIgnoreProperties({"specialists"})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private ReHubModel reHub;
 
     public void addClient(ClientModel client) {
         clients.add(client);
         client.getSpecialists().add(this);
+    }
+
+    public void removeClient(ClientModel client) {
+        clients.remove(client);
+        client.getSpecialists().remove(this);
     }
 
 }

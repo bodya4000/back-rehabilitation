@@ -1,10 +1,8 @@
-here I configured relations properly so that I can create specialist with
 
-set of clients and the same for clients. However, there are some things needs to be done such as:
+tasks
 
-1) ConcurrentModificationException
-2) adding new client for specialist
-3) adding new specialist for clients
-4) patch method to change info for all entities
-5) configure many-to-one relation between specialist and rehub
-6) complete all crud methods
+1) add handling exception if request are bad
+2) add message from api to client
+3) solve problem one extra join sql query when load reHub and it loads specialist and it loads its rehub
+4) handle validation
+5) insert user password
