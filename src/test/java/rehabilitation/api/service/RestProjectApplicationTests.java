@@ -1,4 +1,4 @@
-package veres.lection.first.rest;
+package rehabilitation.api.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
