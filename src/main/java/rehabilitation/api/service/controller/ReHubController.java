@@ -1,14 +1,15 @@
 package rehabilitation.api.service.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rehabilitation.api.service.business.SpecialistService;
+import rehabilitation.api.service.dto.RehubDto;
 import rehabilitation.api.service.entity.ReHubModel;
 import rehabilitation.api.service.business.ReHubService;
-import rehabilitation.api.service.exception.NotFoundIdException;
+import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.NullLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -23,19 +24,19 @@ public class ReHubController{
     private ReHubService reHubService;
 
     @GetMapping("/rehub")
-    public List<ReHubModel> getAllReHubs(){
-        return reHubService.getAll();
+    public List<RehubDto> getAllReHubs(){
+        return reHubService.getAllModelView();
     }
 
     @GetMapping("/rehub/{login}")
-    public ReHubModel getById(@PathVariable("login") String login) throws NotFoundIdException {
-        return reHubService.getById(login);
+    public RehubDto getByLogin(@PathVariable("login") String login) throws NotFoundLoginException {
+        return reHubService.getModelViewByLogin(login);
     }
 
     @PostMapping
     public ResponseEntity<Integer> create(@RequestBody ReHubModel reHubModel
-    ) throws NotFoundIdException {
-        reHubService.save(reHubModel);
+    ) throws AlreadyExistLoginException, NullLoginException {
+        reHubService.saveModel(reHubModel);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
@@ -45,38 +46,35 @@ public class ReHubController{
     public ResponseEntity<String> update(
             @PathVariable("login") String login,
             @RequestBody Map<String, Object> updates
-            ) throws NotFoundIdException {
-        reHubService.updateRehub(login, updates);
+            ) throws NotFoundLoginException {
+        reHubService.updateModel(login, updates);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("rehub updated");
     }
 
     @DeleteMapping("/rehub/{login}")
-    public ResponseEntity<Integer> delete(@PathVariable("login") String login) throws NotFoundIdException {
-        reHubService.delete(reHubService.getById(login));
+    public ResponseEntity<Integer> delete(@PathVariable("login") String login) throws NotFoundLoginException {
+        reHubService.deleteModel(login);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
-    @PostMapping("/{rehubId}/specialist/{specialistLogin}")
+    @PostMapping("/{rehubLogin}/specialist/{specialistLogin}")
     public ResponseEntity<Integer> addNewSpecialist(
-            @PathVariable String specialistLogin,
-            @PathVariable String rehubId
-    ) throws NotFoundIdException {
-        reHubService.addSpecialistById(rehubId, specialistLogin);
+            @PathVariable String rehubLogin,
+            @PathVariable String specialistLogin
+    ) throws NotFoundLoginException {
+        reHubService.addChild(rehubLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{rehubId}/specialist/{specialistLogin}")
+    @DeleteMapping("/{rehubLogin}/specialist/{specialistLogin}")
     public ResponseEntity<Integer> removeNewSpecialist(
-            @PathVariable("rehubId") String rehubId,
-            @PathVariable("specialistLogin") String specialistLogin) throws NotFoundIdException {
-        reHubService.removeSpecialist(rehubId, specialistLogin);
+            @PathVariable("rehubLogin") String rehubLogin,
+            @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
+        reHubService.removeChild(rehubLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-
-
 }

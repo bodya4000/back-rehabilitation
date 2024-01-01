@@ -8,27 +8,31 @@ import java.util.HashSet;
 import java.util.Set;
 
 @ToString(exclude = "specialists")
-@EqualsAndHashCode(of = "login")
 @Setter
 @Getter
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
-public class ClientModel {
+public class ClientModel extends BaseModel{
     @Id
     private String login;
-    @Column
+
+    @Column(nullable = false)
     private String firstName;
-    @Column
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column
     private String address;
-    @Column
-    private String email;
-    @Column
-    private String phoneNumber;
-    @Column
-    private String healthState;
+
+    @Column(nullable = false)
+    private String contactInformation;
+
+    private String imgUrl;
 
     @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"clients"})
