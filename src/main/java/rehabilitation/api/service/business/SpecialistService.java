@@ -1,88 +1,119 @@
 package rehabilitation.api.service.business;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.dto.SpecialistDto;
-import rehabilitation.api.service.exception.NotFoundIdException;
+import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.entity.ClientModel;
 import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.SpecialistRepositoryImpl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class SpecialistService {
+@RequiredArgsConstructor
+public class SpecialistService extends CommonService<SpecialistModel, SpecialistDto> {
 
-    @Autowired
-    private SpecialistRepository specialistRepository;
-    @Autowired
-    private ClientRepository clientRepository;
+    private final SpecialistRepository specialistRepository;
+    private final ClientRepository clientRepository;
+
+
+//    @Autowired
+//    public void setSpecialistRepository(SpecialistRepository specialistRepository) {
+//        this.specialistRepository = specialistRepository;
+//    }
+//
+//    @Autowired
+//    public void setClientRepository(ClientRepository clientRepository) {
+//        this.clientRepository = clientRepository;
+//    }
 
     /* get specialist dto by login for controller*/
+
+    @Override
     @Transactional(readOnly = true)
-    public SpecialistDto getSpecialistView(String login) {
-        var specialistModel = specialistRepository.findByLogin(login).orElseThrow();
+    public SpecialistDto getModelViewByLogin(String login) throws NotFoundLoginException {
+        var specialistModel = checkIfBaseHasLogin(login, specialistRepository);
         List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
-        return doMapSpecialistDtoAndGet(specialistModel, listOfClientsLogin);
+        return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
     }
 
     /* get specialist dto by login for controller*/
+    @Override
     @Transactional(readOnly = true)
-    public List<SpecialistDto> getAllSpecialistView() {
-        List<SpecialistModel> specialistModels = specialistRepository.getAllBy();
+    public List<SpecialistDto> getAllModelView() {
+        List<SpecialistModel> specialistModels = specialistRepository.findAllBy();
         return specialistModels.stream().map(specialistModel -> {
             List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
-            return doMapSpecialistDtoAndGet(specialistModel, listOfClientsLogin);
+            return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
         }).collect(Collectors.toList());
     }
 
+    @Override
     @Transactional
-    public void saveSpecialist(SpecialistModel specialist) {
-//        for(ClientModel nonExistingClient: specialist.getClients()) {
-//            ClientModel existingClient = clientRepository.findByLogin(nonExistingClient.getLogin());
-//            existingClient.addSpecialist(specialist);
-//        }
-        specialist.getClients().stream()
-                .map(client -> clientRepository.findByLogin(client.getLogin()))
-                .forEach(client -> client.addSpecialist(specialist));
+    public void saveModel(SpecialistModel specialist) throws AlreadyExistLoginException {
+        checkIfBaseHasModel(specialist, specialistRepository);
+        Set<ClientModel> clientsCopy = new HashSet<>(specialist.getClients());
 
+        specialist.getClients().forEach(client -> {
+            try {
+                var existingClient = checkIfBaseHasLogin(client.getLogin(), clientRepository);
+                existingClient.addSpecialist(specialist);
+                clientsCopy.add(existingClient);
+            } catch (NotFoundLoginException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+
+        specialist.setClients(clientsCopy);
         specialistRepository.save(specialist);
     }
 
+    @Override
     @Transactional
-    public void updateSpecialist(String login, Map<String, Object> updates) {
-        var specialist = specialistRepository.findByLogin(login).orElseThrow();
+    public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
+        var specialist = checkIfBaseHasLogin(login, specialistRepository);
         executeUpdates(updates, specialist);
     }
 
+    @Override
     @Transactional
-    public void deleteSpecialist(String login) throws NotFoundIdException {
-        SpecialistModel specialist = specialistRepository.findByLogin(login).orElseThrow();
+    public void deleteModel(String login) throws NotFoundLoginException {
+        SpecialistModel specialist = checkIfBaseHasLogin(login, specialistRepository);
+
+        /* first you need delete for specialists_clients and then for specialists */
+        for (ClientModel client : specialist.getClients()) {
+            client.removeSpecialist(specialist);
+        }
         specialistRepository.delete(specialist);
     }
 
+    @Override
     @Transactional
-    public void addClient(String specialistLogin, String clientLogin) {
-        SpecialistModel specialistModel = specialistRepository.findByLogin(specialistLogin).orElseThrow();
-        ClientModel clientModel = clientRepository.findByLogin(clientLogin);
+    public void addChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+        SpecialistModel specialistModel = checkIfBaseHasLogin(specialistLogin, specialistRepository);
+        ClientModel clientModel = checkIfBaseHasLogin(clientLogin, clientRepository);
         specialistModel.addClient(clientModel);
     }
 
     @Transactional
-    public void removeClient(String specialistLogin, String clientLogin) {
-        SpecialistModel specialistModel = specialistRepository.findByLogin(specialistLogin).orElseThrow();
-        ClientModel clientModel = clientRepository.findByLogin(clientLogin);
+    public void removeChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+        SpecialistModel specialistModel = checkIfBaseHasLogin(specialistLogin, specialistRepository);
+        ClientModel clientModel = checkIfBaseHasLogin(clientLogin, clientRepository);
         specialistModel.removeClient(clientModel);
     }
 
-    private void executeUpdates(Map<String, Object> updates, SpecialistModel currentSpecialist) {
+    @Override
+    void executeUpdates(Map<String, Object> updates, SpecialistModel currentSpecialist) {
         updates.forEach((key, value) -> {
             switch (key) {
                 case "firstName":
@@ -100,9 +131,9 @@ public class SpecialistService {
                         currentSpecialist.setType((String) value);
                     }
                     break;
-                case "phoneNumber":
+                case "contactInformation":
                     if (value instanceof String) {
-                        currentSpecialist.setPhoneNumber((String) value);
+                        currentSpecialist.setContactInformation((String) value);
                     }
                     break;
                 case "email":
@@ -121,16 +152,23 @@ public class SpecialistService {
         });
     }
 
-    private SpecialistDto doMapSpecialistDtoAndGet(SpecialistModel specialistModel, List<String> listOfClientsLogin) {
-        return new SpecialistDto(
-                specialistModel.getLogin(),
-                specialistModel.getFirstName(),
-                specialistModel.getLastName(),
-                specialistModel.getExperience(),
-                specialistModel.getRate(),
-                specialistModel.getType(),
-                specialistModel.getImgUrl(),
-                specialistModel.getDescription(),
+    @Override
+    SpecialistDto doMapModelDtoAndGet(SpecialistModel specialistModel, List<String> listOfClientsLogin) {
+        return new SpecialistDto(specialistModel.getLogin(), specialistModel.getFirstName(), specialistModel.getLastName(),
+                specialistModel.getExperience(), specialistModel.getRate(), specialistModel.getType(),
+                specialistModel.getImgUrl(), specialistModel.getDescription(),
                 specialistModel.getReHub() != null ? specialistModel.getReHub().getLogin() : "", listOfClientsLogin);
     }
+
+//
+//    @Transactional(readOnly = true)
+//    public SpecialistModel test(String login) {
+//        return specialistRepository.test(login);
+//    }
+//    @Transactional(readOnly = true)
+//    public SpecialistDto testDto(String login) throws NotFoundLoginException {
+//        var specialistModel = checkIfBaseHasLogin(login, specialistRepository);
+//        List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
+//        return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
+//    }
 }

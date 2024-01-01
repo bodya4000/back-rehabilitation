@@ -8,7 +8,8 @@ public record ClientDto (
         String lastName,
         String email,
         String address,
-        String phoneNumber,
+        String contactInformation,
+        String imgUrl,
         List<String> specialistLogin
 ){
 }

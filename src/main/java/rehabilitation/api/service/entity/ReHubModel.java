@@ -9,11 +9,10 @@ import lombok.*;
 import java.util.Set;
 
 @ToString(exclude = "specialists")
-@EqualsAndHashCode(of = "login")
 @Setter@Getter
 @Entity
 @Table(name = "re_hubs")
-public class ReHubModel {
+public class ReHubModel extends BaseModel{
 
     @Id
     private String login;
@@ -21,21 +20,21 @@ public class ReHubModel {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String location;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "contact_information", nullable = false)
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
     private String contactInformation;
 
-    private int rating;
-//    @ElementCollection
-//    @CollectionTable(name = "services", joinColumns = @JoinColumn(name = "rehub_id"))
-//    @Column(name = "service")
-//    private List<String> services;
+    private String imgUrl;
 
-    @Setter(AccessLevel.PRIVATE)
-    @JsonIgnoreProperties("reHub")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reHub")
+    private int rating;
+
+    @JsonIgnoreProperties({"specialists, reHub"})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reHub", cascade = CascadeType.MERGE)
     private Set<SpecialistModel> specialists;
 
     public void addSpecialist(SpecialistModel specialist) {

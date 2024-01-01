@@ -15,36 +15,43 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "specialists")
 @Entity
-public class SpecialistModel {
+public class SpecialistModel extends BaseModel {
     @Id
     private String login;
-    @Column
+
+    @Column(nullable = false)
     private String firstName;
-    @Column
+
+    @Column(nullable = false)
     private String lastName;
-    @Column
-    private String type;
-    @Column
-    private String phoneNumber;
-    @Column
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private String contactInformation;
+
     @Column
     private int experience;
+
     @Column
     private int rate;
+
     @Column
     private String description;
-    @Column
+
     private String imgUrl;
 
-    @Setter(AccessLevel.PRIVATE)
+    @Column
+    private String type;
+
     @JsonIgnoreProperties({"specialists"})
     @ManyToMany(mappedBy = "specialists", fetch = FetchType.LAZY)
     private Set<ClientModel> clients = new HashSet<>();
 
     @JoinColumn(name = "re_hub_login")
-    @JsonIgnoreProperties({"specialists"})
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties({"reHub, specialists"})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     private ReHubModel reHub;
 
     public void addClient(ClientModel client) {
