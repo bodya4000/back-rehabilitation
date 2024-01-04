@@ -22,4 +22,7 @@ public interface ClientRepository extends JpaRepository<ClientModel, String>,Com
     Optional<ClientModel> findByLogin(@Param("login") String login);
 
 
+    @Query("select distinct c from ClientModel c left join fetch c.roles where c.login=:login")
+    Optional<ClientModel> findByLoginFetchRoles(@Param("login") String login);
+
 }

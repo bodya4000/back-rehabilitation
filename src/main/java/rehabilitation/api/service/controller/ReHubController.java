@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rehabilitation.api.service.dto.RegistrationDto;
 import rehabilitation.api.service.dto.RehubDto;
 import rehabilitation.api.service.entity.ReHubModel;
 import rehabilitation.api.service.business.ReHubService;
@@ -34,9 +35,9 @@ public class ReHubController{
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody ReHubModel reHubModel
+    public ResponseEntity<Integer> create(@RequestBody RegistrationDto registrationDto
     ) throws AlreadyExistLoginException, NullLoginException {
-        reHubService.saveModel(reHubModel);
+        reHubService.signUpModel(registrationDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();

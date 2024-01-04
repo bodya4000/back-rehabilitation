@@ -2,20 +2,33 @@ package rehabilitation.api.service.business;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import rehabilitation.api.service.dto.AuthenticateDto;
 import rehabilitation.api.service.dto.ClientDto;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.dto.JwtResponse;
+import rehabilitation.api.service.dto.RegistrationDto;
+import rehabilitation.api.service.entity.*;
 
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 
+import rehabilitation.api.service.exceptionHandling.exception.PasswordRegistryException;
+import rehabilitation.api.service.exceptionHandling.exception.WrongPasswordOrLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
 import rehabilitation.api.service.repositories.SpecialistRepositoryImpl;
+import rehabilitation.api.service.util.JwtTokenUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,16 +40,30 @@ public class ClientService extends CommonService<ClientModel, ClientDto> {
     private final ClientRepository clientRepository;
 
     private final SpecialistRepositoryImpl specialistRepository;
-//
-//    @Autowired
-//    public void setClientRepository(ClientRepository clientRepository) {
-//        this.clientRepository = clientRepository;
-//    }
+    private BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private UserService userService;
+    private JwtTokenUtils jwtTokenUtils;
+
+    @Autowired
+    public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
+        this.jwtTokenUtils = jwtTokenUtils;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
 //    @Autowired
-//    public void setSpecialistRepository(SpecialistRepository specialistRepository) {
-//        this.specialistRepository = specialistRepository;
+//    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+//        this.authenticationManager = authenticationManager;
 //    }
+
+    @Autowired
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -51,48 +78,62 @@ public class ClientService extends CommonService<ClientModel, ClientDto> {
     @Override
     @Transactional(readOnly = true)
     public ClientDto getModelViewByLogin(String login) throws NotFoundLoginException {
-        var clientModel = checkIfBaseHasLogin(login, clientRepository);
+        var clientModel = getModelIfExists(login, clientRepository);
         List<String> listOfClientsLogin = clientModel.getSpecialists().stream().map(SpecialistModel::getLogin).collect(Collectors.toList());
         return doMapModelDtoAndGet(clientModel, listOfClientsLogin);
     }
 
     @Override
     @Transactional
-    public void saveModel(ClientModel clientModel) throws AlreadyExistLoginException {
-        // todo check if exists injected specialists
-        if (checkIfBaseHasModel(clientModel, clientRepository)) {
-            clientRepository.save(clientModel);
+    public void signUpModel(RegistrationDto registrationDto) throws AlreadyExistLoginException, PasswordRegistryException {
+
+        if (!registrationDto.password().equals(registrationDto.confirmedPassword())) {
+            throw new PasswordRegistryException();
+        }
+
+        if (checkIfBaseHasModel(registrationDto.login(), registrationDto.email(), clientRepository)) {
+            var client = new ClientModel();
+            client.setLogin(registrationDto.login());
+            client.setEmail(registrationDto.email());
+            client.setPassword(passwordEncoder.encode(registrationDto.password()));
+            var role = new UserRole(Role.ROLE_CLIENT, client);
+            client.getRoles().add(role);
+            clientRepository.save(client);
         }
     }
 
     @Override
     public void deleteModel(String login) throws NotFoundLoginException {
-        var client = checkIfBaseHasLogin(login, clientRepository);
+        var client = getModelIfExists(login, clientRepository);
         clientRepository.delete(client);
     }
 
     @Override
     @Transactional
     public void addChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
-        var client = checkIfBaseHasLogin(clientLogin, clientRepository);
-        var specialist = checkIfBaseHasLogin(specialistLogin, specialistRepository);
+        var client = getModelIfExists(clientLogin, clientRepository);
+        var specialist = getModelIfExists(specialistLogin, specialistRepository);
         client.addSpecialist(specialist);
     }
 
     @Override
     @Transactional
     public void removeChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
-        ClientModel client = checkIfBaseHasLogin(clientLogin, clientRepository);
-        SpecialistModel specialist = checkIfBaseHasLogin(specialistLogin, specialistRepository);
+        ClientModel client = getModelIfExists(clientLogin, clientRepository);
+        SpecialistModel specialist = getModelIfExists(specialistLogin, specialistRepository);
         client.removeSpecialist(specialist);
     }
 
     @Override
     ClientDto doMapModelDtoAndGet(ClientModel clientModel, List<String> listOfSpecialistLogin) {
-        return new ClientDto(clientModel.getLogin(), clientModel.getFirstName(),
-                clientModel.getLastName(), clientModel.getEmail(),
-                clientModel.getAddress(), clientModel.getContactInformation(), clientModel.getImgUrl(), listOfSpecialistLogin);
+        return new ClientDto(clientModel.getLogin(), clientModel.getFirstName(), clientModel.getLastName(), clientModel.getEmail(), clientModel.getAddress(), clientModel.getContactInformation(), clientModel.getImgUrl(), listOfSpecialistLogin);
     }
+
+    @Override
+    public ClientModel loadModel(String login) throws NotFoundLoginException {
+        return getModelIfExists(login, clientRepository);
+    }
+
 
     @Override
     void executeUpdates(Map<String, Object> updates, ClientModel currentClient) {
@@ -122,8 +163,21 @@ public class ClientService extends CommonService<ClientModel, ClientDto> {
     @Override
     @Transactional
     public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
-        var currentClient = checkIfBaseHasLogin(login, clientRepository);
+        var currentClient = getModelIfExists(login, clientRepository);
         executeUpdates(updates, currentClient);
+    }
+
+    public JwtResponse authenticate(AuthenticateDto authenticateDto) throws WrongPasswordOrLoginException, NotFoundLoginException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticateDto.login(),authenticateDto.password())
+            );
+        } catch (Exception e) {
+            return new JwtResponse("wrong");
+        }
+        UserDetails userDetails = userService.loadUserByUsername(authenticateDto.login());
+        String jwtToken = jwtTokenUtils.generateToken(userDetails);
+        return new JwtResponse(jwtToken);
     }
 }
 

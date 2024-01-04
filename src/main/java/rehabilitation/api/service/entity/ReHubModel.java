@@ -1,18 +1,19 @@
 package rehabilitation.api.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @ToString(exclude = "specialists")
 @Setter@Getter
 @Entity
 @Table(name = "re_hubs")
-public class ReHubModel extends BaseModel{
+public class ReHubModel extends CommonModel {
 
     @Id
     private String login;
@@ -32,6 +33,12 @@ public class ReHubModel extends BaseModel{
     private String imgUrl;
 
     private int rating;
+
+    private String password;
+
+//    @ElementCollection
+//    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "rehub_login"))
+//    private List<Role> roles = new ArrayList<>();
 
     @JsonIgnoreProperties({"specialists, reHub"})
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reHub", cascade = CascadeType.MERGE)

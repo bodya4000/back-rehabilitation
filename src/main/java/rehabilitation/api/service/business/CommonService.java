@@ -1,17 +1,17 @@
 package rehabilitation.api.service.business;
 
-import rehabilitation.api.service.entity.BaseModel;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.dto.RegistrationDto;
+import rehabilitation.api.service.entity.CommonModel;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.exceptionHandling.exception.NullLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.PasswordRegistryException;
 import rehabilitation.api.service.repositories.CommonRepository;
 
 import java.util.List;
 import java.util.Map;
 
-public abstract class CommonService<Model extends BaseModel, Dto> {
+public abstract class CommonService<Model extends CommonModel, Dto>  {
+
 
     /**
      * Retrieves a list of all models and maps each model into a DTO.
@@ -35,7 +35,7 @@ public abstract class CommonService<Model extends BaseModel, Dto> {
      * @param model Model received from the client-side
      * @throws AlreadyExistLoginException if the login or email already exist in the database
      */
-    abstract void saveModel(Model model) throws AlreadyExistLoginException;
+    abstract void signUpModel(RegistrationDto RegistrationDto) throws AlreadyExistLoginException, PasswordRegistryException;
 
     /**
      * Updates a model's specific attributes identified by the provided map of updates.
@@ -98,7 +98,7 @@ public abstract class CommonService<Model extends BaseModel, Dto> {
      * @return Model found in the database by the repository
      * @throws NotFoundLoginException if the login is not found in the database
      */
-    public <AnyModel extends BaseModel> AnyModel checkIfBaseHasLogin(String login, CommonRepository<AnyModel> repository) throws NotFoundLoginException {
+    public <AnyModel extends CommonModel> AnyModel getModelIfExists(String login, CommonRepository<AnyModel> repository) throws NotFoundLoginException {
         return repository.findByLogin(login).orElseThrow(() -> new NotFoundLoginException(login));
     }
 
@@ -106,19 +106,28 @@ public abstract class CommonService<Model extends BaseModel, Dto> {
      * Checks if the model's email and login exist in the database using the specified repository.
      *
      * @param <AnyModel>  Generic model
-     * @param anyModel    Model to be checked
+//     * @param anyModel    Model to be checked
      * @param repository  Model's repository handling SQL queries
      * @return true if the model does not exist in the database
      * @throws AlreadyExistLoginException if the login or email already exist in the database
      */
-    public <AnyModel extends BaseModel> boolean checkIfBaseHasModel(AnyModel anyModel, CommonRepository<AnyModel> repository) throws AlreadyExistLoginException {
-        if (repository.existsByLogin(anyModel.getLogin())) {
-            throw new AlreadyExistLoginException(anyModel.getLogin());
+    public <AnyModel extends CommonModel> boolean checkIfBaseHasModel(
+            String login,
+            String email,
+            CommonRepository<AnyModel> repository) throws AlreadyExistLoginException {
+
+        // todo change api for this method
+
+        if (repository.existsByLogin(login)) {
+            throw new AlreadyExistLoginException(login);
         }
-        if (repository.existsByEmail(anyModel.getEmail())) {
-            throw new AlreadyExistLoginException(anyModel.getEmail());
+        if (repository.existsByEmail(email)) {
+            throw new AlreadyExistLoginException(email);
         }
         return true;
     }
 
+
+
+    abstract Model loadModel(String login) throws NotFoundLoginException;
 }

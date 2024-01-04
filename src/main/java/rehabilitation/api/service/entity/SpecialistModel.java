@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 //@ToString(exclude = "clients")
@@ -15,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "specialists")
 @Entity
-public class SpecialistModel extends BaseModel {
+public class SpecialistModel extends CommonModel {
     @Id
     private String login;
 
@@ -45,6 +47,11 @@ public class SpecialistModel extends BaseModel {
     @Column
     private String type;
 
+    private String password;
+
+//    @OneToMany(mappedBy = "login", cascade = CascadeType.ALL)
+//    private Set<UserRole> roles = new HashSet<>();
+
     @JsonIgnoreProperties({"specialists"})
     @ManyToMany(mappedBy = "specialists", fetch = FetchType.LAZY)
     private Set<ClientModel> clients = new HashSet<>();
@@ -53,6 +60,9 @@ public class SpecialistModel extends BaseModel {
     @JsonIgnoreProperties({"reHub, specialists"})
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     private ReHubModel reHub;
+
+
+
 
     public void addClient(ClientModel client) {
         clients.add(client);

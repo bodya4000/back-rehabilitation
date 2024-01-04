@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @ToString(exclude = "specialists")
 @Setter
@@ -13,14 +12,14 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
-public class ClientModel extends BaseModel{
+public class ClientModel extends CommonModel {
     @Id
     private String login;
 
-    @Column(nullable = false)
+    @Column
     private String firstName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
     @Column(nullable = false, unique = true)
@@ -29,10 +28,15 @@ public class ClientModel extends BaseModel{
     @Column
     private String address;
 
-    @Column(nullable = false)
+    @Column
     private String contactInformation;
 
     private String imgUrl;
+
+    private String password;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private Set<UserRole> roles = new HashSet<>();
 
     @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"clients"})
@@ -61,4 +65,5 @@ public class ClientModel extends BaseModel{
         specialists.remove(specialist);
         specialist.getClients().remove(this);
     }
+
 }

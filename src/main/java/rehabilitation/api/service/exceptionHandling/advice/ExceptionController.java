@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.WrongPasswordOrLoginException;
 
 @ControllerAdvice
 public class ExceptionController {
@@ -25,4 +26,10 @@ public class ExceptionController {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(WrongPasswordOrLoginException.class)
+    public ResponseEntity<String> unathorized(WrongPasswordOrLoginException e){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(e.getMessage());
+    }
 }

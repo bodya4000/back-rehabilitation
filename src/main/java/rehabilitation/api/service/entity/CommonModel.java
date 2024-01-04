@@ -3,10 +3,13 @@ package rehabilitation.api.service.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@MappedSuperclass
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
-public abstract class BaseModel {
+public abstract class CommonModel {
     @Id
     private String login;
 
@@ -19,4 +22,8 @@ public abstract class BaseModel {
     @Column
     private String contactInformation;
 
+    @Column
+    private String password;
+
+    private Set<UserRole> roles;
 }

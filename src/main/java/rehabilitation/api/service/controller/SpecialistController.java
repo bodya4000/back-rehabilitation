@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.business.SpecialistService;
+import rehabilitation.api.service.dto.RegistrationDto;
 import rehabilitation.api.service.dto.SpecialistDto;
 import rehabilitation.api.service.entity.SpecialistModel;
 import rehabilitation.api.service.business.ClientService;
@@ -55,8 +56,8 @@ public class SpecialistController {
      * */
 
     @PostMapping("/specialist")
-    public ResponseEntity<String> createSpecialist(@RequestBody SpecialistModel specialist) throws NotFoundLoginException, AlreadyExistLoginException {
-        specialistService.saveModel(specialist);
+    public ResponseEntity<String> createSpecialist(@RequestBody RegistrationDto registrationDto) throws NotFoundLoginException, AlreadyExistLoginException {
+        specialistService.signUpModel(registrationDto);
         return ResponseEntity.ok("Specialist created successfully.");
     }
 
