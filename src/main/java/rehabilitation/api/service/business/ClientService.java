@@ -3,13 +3,9 @@ package rehabilitation.api.service.business;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,25 +21,35 @@ import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginExcep
 import rehabilitation.api.service.exceptionHandling.exception.PasswordRegistryException;
 import rehabilitation.api.service.exceptionHandling.exception.WrongPasswordOrLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.SpecialistRepositoryImpl;
+import rehabilitation.api.service.repositories.SpecialistRepository;
 import rehabilitation.api.service.util.JwtTokenUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("clientService")
-@RequiredArgsConstructor
 public class ClientService extends CommonService<ClientModel, ClientDto> {
 
-    private final ClientRepository clientRepository;
-
-    private final SpecialistRepositoryImpl specialistRepository;
+    private ClientRepository clientRepository;
+    private SpecialistRepository specialistRepository;
     private BCryptPasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     private UserService userService;
     private JwtTokenUtils jwtTokenUtils;
+
+    @Autowired
+    public void setClientRepository(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
+    @Autowired
+    public void setSpecialistRepository(SpecialistRepository specialistRepository) {
+        this.specialistRepository = specialistRepository;
+    }
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     @Autowired
     public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
@@ -83,24 +89,6 @@ public class ClientService extends CommonService<ClientModel, ClientDto> {
         return doMapModelDtoAndGet(clientModel, listOfClientsLogin);
     }
 
-    @Override
-    @Transactional
-    public void signUpModel(RegistrationDto registrationDto) throws AlreadyExistLoginException, PasswordRegistryException {
-
-        if (!registrationDto.password().equals(registrationDto.confirmedPassword())) {
-            throw new PasswordRegistryException();
-        }
-
-        if (checkIfBaseHasModel(registrationDto.login(), registrationDto.email(), clientRepository)) {
-            var client = new ClientModel();
-            client.setLogin(registrationDto.login());
-            client.setEmail(registrationDto.email());
-            client.setPassword(passwordEncoder.encode(registrationDto.password()));
-            var role = new UserRole(Role.ROLE_CLIENT, client);
-            client.getRoles().add(role);
-            clientRepository.save(client);
-        }
-    }
 
     @Override
     public void deleteModel(String login) throws NotFoundLoginException {
@@ -165,19 +153,6 @@ public class ClientService extends CommonService<ClientModel, ClientDto> {
     public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
         var currentClient = getModelIfExists(login, clientRepository);
         executeUpdates(updates, currentClient);
-    }
-
-    public JwtResponse authenticate(AuthenticateDto authenticateDto) throws WrongPasswordOrLoginException, NotFoundLoginException {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticateDto.login(),authenticateDto.password())
-            );
-        } catch (Exception e) {
-            return new JwtResponse("wrong");
-        }
-        UserDetails userDetails = userService.loadUserByUsername(authenticateDto.login());
-        String jwtToken = jwtTokenUtils.generateToken(userDetails);
-        return new JwtResponse(jwtToken);
     }
 }
 

@@ -13,29 +13,9 @@ import java.util.Set;
 @Setter@Getter
 @Entity
 @Table(name = "re_hubs")
-public class ReHubModel extends CommonModel {
-
-    @Id
-    private String login;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private String contactInformation;
-
-    private String imgUrl;
+public class ReHubModel extends UserModel {
 
     private int rating;
-
-    private String password;
-
 //    @ElementCollection
 //    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "rehub_login"))
 //    private List<Role> roles = new ArrayList<>();

@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e){
                 log.debug("time jwt expired");
             } catch (SignatureException e) {
-                log.info("wrong signature");
+                log.debug("wrong signature");
             }
         }
 
@@ -62,4 +62,3 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

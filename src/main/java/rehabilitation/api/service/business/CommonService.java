@@ -1,16 +1,17 @@
 package rehabilitation.api.service.business;
 
 import rehabilitation.api.service.dto.RegistrationDto;
-import rehabilitation.api.service.entity.CommonModel;
+import rehabilitation.api.service.entity.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.PasswordRegistryException;
 import rehabilitation.api.service.repositories.CommonRepository;
+import rehabilitation.api.service.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Map;
 
-public abstract class CommonService<Model extends CommonModel, Dto>  {
+public abstract class CommonService<Model extends UserModel, Dto>  {
 
 
     /**
@@ -27,15 +28,8 @@ public abstract class CommonService<Model extends CommonModel, Dto>  {
      * @return DTO model
      * @throws NotFoundLoginException if the login is not found in the database
      */
-    abstract Dto getModelViewByLogin(String login) throws NotFoundLoginException;
+    abstract Dto getModelViewByLogin(String login) throws Throwable;
 
-    /**
-     * Saves a new model after checking for existing logins in the database.
-     *
-     * @param model Model received from the client-side
-     * @throws AlreadyExistLoginException if the login or email already exist in the database
-     */
-    abstract void signUpModel(RegistrationDto RegistrationDto) throws AlreadyExistLoginException, PasswordRegistryException;
 
     /**
      * Updates a model's specific attributes identified by the provided map of updates.
@@ -94,24 +88,24 @@ public abstract class CommonService<Model extends CommonModel, Dto>  {
      *
      * @param login      Unique identifier for the model in the database
      * @param repository Model's repository handling SQL queries
-     * @param <AnyModel> Generic model
+//     * @param <AnyModel> Generic model
      * @return Model found in the database by the repository
      * @throws NotFoundLoginException if the login is not found in the database
      */
-    public <AnyModel extends CommonModel> AnyModel getModelIfExists(String login, CommonRepository<AnyModel> repository) throws NotFoundLoginException {
+    public <AnyModel extends UserModel> AnyModel getModelIfExists(String login, CommonRepository<AnyModel> repository) throws  NotFoundLoginException{
         return repository.findByLogin(login).orElseThrow(() -> new NotFoundLoginException(login));
     }
 
     /**
      * Checks if the model's email and login exist in the database using the specified repository.
      *
-     * @param <AnyModel>  Generic model
+//     * @param <AnyModel>  Generic model
 //     * @param anyModel    Model to be checked
      * @param repository  Model's repository handling SQL queries
      * @return true if the model does not exist in the database
      * @throws AlreadyExistLoginException if the login or email already exist in the database
      */
-    public <AnyModel extends CommonModel> boolean checkIfBaseHasModel(
+    public <AnyModel extends UserModel> boolean checkIfBaseHasModel(
             String login,
             String email,
             CommonRepository<AnyModel> repository) throws AlreadyExistLoginException {

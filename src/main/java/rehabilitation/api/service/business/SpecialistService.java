@@ -1,14 +1,9 @@
 package rehabilitation.api.service.business;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.dto.RegistrationDto;
-import rehabilitation.api.service.entity.ReHubModel;
 import rehabilitation.api.service.entity.SpecialistModel;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
@@ -16,12 +11,10 @@ import rehabilitation.api.service.dto.SpecialistDto;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.entity.ClientModel;
 import rehabilitation.api.service.repositories.SpecialistRepository;
-import rehabilitation.api.service.repositories.SpecialistRepositoryImpl;
+import rehabilitation.api.service.repositories.UserRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +23,7 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     private final SpecialistRepository specialistRepository;
     private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
 
 //    @Autowired
@@ -61,23 +55,6 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
             List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
             return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
         }).collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public void signUpModel(RegistrationDto registrationDto) throws AlreadyExistLoginException {
-        // todo check if exists injected specialists
-        // todo add checking about passwords, login, email
-        // todo finish method
-
-
-        if (checkIfBaseHasModel(registrationDto.login(), registrationDto.email(), specialistRepository)) {
-            var specialist = new SpecialistModel();
-            specialist.setLogin(registrationDto.login());
-            specialist.setEmail(registrationDto.email());
-//            reHubModel.setPassword();
-            specialistRepository.save(specialist);
-        }
     }
 
     @Override
@@ -166,20 +143,5 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
     SpecialistModel loadModel(String login) throws NotFoundLoginException {
         return null;
     }
-
-//    @Transactional
-//    @Override
-//    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-//        try {
-//            SpecialistModel client = getModelIfExists(login, specialistRepository);
-//            return new User(
-//                    client.getLogin(),
-//                    client.getPassword(),
-//                    client.getRoles());
-//        } catch (NotFoundLoginException e) {
-//            throw new UsernameNotFoundException("not found " + login);
-//        }
-//
-//    }
 
 }

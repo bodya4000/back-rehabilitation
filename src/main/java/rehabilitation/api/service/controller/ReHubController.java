@@ -1,8 +1,10 @@
 package rehabilitation.api.service.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.dto.RegistrationDto;
 import rehabilitation.api.service.dto.RehubDto;
@@ -34,16 +36,8 @@ public class ReHubController{
         return reHubService.getModelViewByLogin(login);
     }
 
-    @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody RegistrationDto registrationDto
-    ) throws AlreadyExistLoginException, NullLoginException {
-        reHubService.signUpModel(registrationDto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
-    }
-
     @PatchMapping("{login}")
+    @PreAuthorize("#login == authentication.principal")
     public ResponseEntity<String> update(
             @PathVariable("login") String login,
             @RequestBody Map<String, Object> updates
@@ -55,6 +49,7 @@ public class ReHubController{
     }
 
     @DeleteMapping("/rehub/{login}")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<Integer> delete(@PathVariable("login") String login) throws NotFoundLoginException {
         reHubService.deleteModel(login);
         return ResponseEntity
@@ -63,6 +58,7 @@ public class ReHubController{
     }
 
     @PostMapping("/{rehubLogin}/specialist/{specialistLogin}")
+    @PreAuthorize("#rehubLogin == authentication.principal")
     public ResponseEntity<Integer> addNewSpecialist(
             @PathVariable String rehubLogin,
             @PathVariable String specialistLogin
@@ -72,6 +68,7 @@ public class ReHubController{
     }
 
     @DeleteMapping("/{rehubLogin}/specialist/{specialistLogin}")
+    @PreAuthorize("#rehubLogin == authentication.principal")
     public ResponseEntity<Integer> removeNewSpecialist(
             @PathVariable("rehubLogin") String rehubLogin,
             @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {

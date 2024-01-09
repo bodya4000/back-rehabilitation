@@ -1,19 +1,17 @@
 package rehabilitation.api.service.business;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.CommonModel;
+import rehabilitation.api.service.entity.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.repositories.ReHubRepository;
 import rehabilitation.api.service.repositories.SpecialistRepository;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -29,7 +27,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
         try {
-            CommonModel user = Stream.of(
+            UserModel user = Stream.of(
                             clientRepository.findByLogin(login),
                             specialistRepository.findByLogin(login),
                             reHubRepository.findByLogin(login)
@@ -43,7 +41,8 @@ public class UserService implements UserDetailsService {
             return new org.springframework.security.core.userdetails.User(
                     user.getLogin(),
                     user.getPassword(),
-                    user.getRoles()
+//                    user.getRoles()
+                    new ArrayList<>()
             );
         } catch (NotFoundLoginException e) {
             throw new UsernameNotFoundException(e.getMessage());

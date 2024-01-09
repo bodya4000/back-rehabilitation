@@ -12,31 +12,8 @@ import java.util.*;
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
-public class ClientModel extends CommonModel {
-    @Id
-    private String login;
+public class ClientModel extends UserModel {
 
-    @Column
-    private String firstName;
-
-    @Column
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column
-    private String address;
-
-    @Column
-    private String contactInformation;
-
-    private String imgUrl;
-
-    private String password;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private Set<UserRole> roles = new HashSet<>();
 
     @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"clients"})

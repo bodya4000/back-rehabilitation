@@ -19,6 +19,7 @@ import rehabilitation.api.service.exceptionHandling.exception.NullLoginException
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.repositories.ReHubRepository;
 import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.UserRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class ReHubService extends CommonService<ReHubModel, RehubDto>{
     private final ReHubRepository reHubRepository;
     private final SpecialistRepository specialistRepository;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -57,22 +59,6 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
         return doMapModelDtoAndGet(reModel, listOfClientsLogin);
     }
 
-    @Override
-    @Transactional
-    public void signUpModel(RegistrationDto registrationDto) throws AlreadyExistLoginException {
-        // todo check if exists injected specialists
-        // todo add checking about passwords, login, email
-        // todo finish method
-
-
-        if (checkIfBaseHasModel(registrationDto.login(), registrationDto.email(), reHubRepository)) {
-            var reHubModel = new ReHubModel();
-            reHubModel.setLogin(registrationDto.login());
-            reHubModel.setEmail(registrationDto.email());
-//            reHubModel.setPassword();
-            reHubRepository.save(reHubModel);
-        }
-    }
 
     @Override
     public void deleteModel(String login) throws NotFoundLoginException {
@@ -141,20 +127,5 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
         executeUpdates(updates, currentClient);
     }
 
-
-//    @Transactional
-//    @Override
-//    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-//        try {
-//            ReHubModel client = getModelIfExists(login, reHubRepository);
-//            return new User(
-//                    client.getLogin(),
-//                    client.getPassword(),
-//                    client.getRoles());
-//        } catch (NotFoundLoginException e) {
-//            throw new UsernameNotFoundException("not found " + login);
-//        }
-//
-//    }
 }
 

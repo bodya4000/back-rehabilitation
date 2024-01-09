@@ -49,26 +49,6 @@ public class ClientController {
     }
 
     /*
-     * This method create a client in database and returns its json
-     *
-     *
-     * here will be implemented registration logic
-     * */
-    @PostMapping("/registration")
-    public ResponseEntity<?> createClient(@RequestBody RegistrationDto registrationDto) throws AlreadyExistLoginException, NullLoginException, PasswordRegistryException {
-
-        clientService.signUpModel(registrationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("client successfully saved");
-    }
-
-    @PostMapping("/authentication")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticateDto authenticateDto) throws AlreadyExistLoginException, NullLoginException, PasswordRegistryException, WrongPasswordOrLoginException, NotFoundLoginException {
-
-        JwtResponse jwtToken = clientService.authenticate(authenticateDto);
-        return ResponseEntity.status(HttpStatus.FOUND).body(jwtToken);
-    }
-
-    /*
      * This method updates a client by login in database and returns its json
      * */
 
@@ -95,7 +75,7 @@ public class ClientController {
 
 
     @PostMapping("/{clientLogin}/specialist/{specialistLogin}")
-    @PreAuthorize("#login == authentication.principal.username")
+    @PreAuthorize("#clientLogin == authentication.principal.username")
     public ResponseEntity<Integer> addSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
         clientService.addChild(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -103,7 +83,7 @@ public class ClientController {
 
 
     @DeleteMapping("/{clientLogin}/specialist/{specialistLogin}")
-    @PreAuthorize("#login == authentication.principal.username")
+    @PreAuthorize("#clientLogin == authentication.principal.username")
     public ResponseEntity<Integer> removeSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
         clientService.removeChild(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

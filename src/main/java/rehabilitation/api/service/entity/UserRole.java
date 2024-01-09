@@ -1,5 +1,6 @@
 package rehabilitation.api.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.persistence.IdClass;
 import lombok.AllArgsConstructor;
@@ -16,18 +17,19 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "user_roles")
 public class UserRole implements GrantedAuthority {
 
-    public UserRole(Role role, ClientModel client) {
+    public UserRole(Role role, UserModel userModel) {
         this.role = role;
-        this.client = client;
+        this.userModel = userModel;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "client_login")
-    private ClientModel client;
+    @JsonIgnoreProperties("roles")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_login")
+    private UserModel userModel;
 
     @Enumerated(EnumType.STRING)
     private Role role;
