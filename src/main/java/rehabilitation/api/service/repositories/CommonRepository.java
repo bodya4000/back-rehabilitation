@@ -12,8 +12,6 @@ public interface CommonRepository<User> {
 
     Optional<User> findByLogin(@Param("login") String login);
 
-
-
     Optional<User> findByLoginFetchRoles(@Param("login") String login);
 
     boolean existsByLogin(String login);

@@ -1,6 +1,8 @@
 package rehabilitation.api.service.exceptionHandling.exception;
 
-public class WrongPasswordOrLoginException extends Exception{
+import org.springframework.security.core.AuthenticationException;
+
+public class WrongPasswordOrLoginException extends AuthenticationException {
     public WrongPasswordOrLoginException(String e){
         super(e);
     }

@@ -26,12 +26,6 @@ public class UserModel {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = true)
-    private String firstName;
-
-    @Column(nullable = true)
-    private String lastName;
-
     @Column
     private String contactInformation;
 
@@ -44,5 +38,17 @@ public class UserModel {
     @JsonIgnoreProperties("userModel")
     @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserRole> roles = new HashSet<>();
+
+    public void addRole(UserRole role) {
+        roles.add(role);
+        role.setUserModel(this);
+    }
+
+    public void removeRole(UserRole role) {
+        roles.remove(role);
+        role.setUserModel(null);
+        role=null;
+    }
+
 
 }

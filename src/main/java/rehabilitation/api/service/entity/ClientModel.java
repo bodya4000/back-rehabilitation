@@ -13,11 +13,15 @@ import java.util.*;
 @Table(name = "clients")
 @Entity
 public class ClientModel extends UserModel {
+    @Column(nullable = true)
+    private String firstName;
 
+    @Column(nullable = true)
+    private String lastName;
 
     @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"clients"})
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JoinTable(
             name = "clients_specialists",
             joinColumns = {
@@ -41,6 +45,10 @@ public class ClientModel extends UserModel {
     public void removeSpecialist(SpecialistModel specialist) {
         specialists.remove(specialist);
         specialist.getClients().remove(this);
+    }
+
+    public List<String> getListOfSpecialistsLogin(){
+        return specialists.stream().map(SpecialistModel::getLogin).toList();
     }
 
 }

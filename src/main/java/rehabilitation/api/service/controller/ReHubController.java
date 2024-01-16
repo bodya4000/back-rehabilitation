@@ -27,6 +27,7 @@ public class ReHubController{
     private ReHubService reHubService;
 
     @GetMapping("/rehub")
+    @RolesAllowed("ADMIN")
     public List<RehubDto> getAllReHubs(){
         return reHubService.getAllModelView();
     }

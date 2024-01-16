@@ -32,6 +32,7 @@ public class UserRole implements GrantedAuthority {
     private UserModel userModel;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     // Constructors, getters, setters, and other methods...

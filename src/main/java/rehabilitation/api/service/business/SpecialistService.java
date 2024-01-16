@@ -1,11 +1,15 @@
 package rehabilitation.api.service.business;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.dto.RegistrationDto;
 import rehabilitation.api.service.entity.SpecialistModel;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.BadRequestException;
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.dto.SpecialistDto;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
@@ -23,23 +27,10 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     private final SpecialistRepository specialistRepository;
     private final ClientRepository clientRepository;
-    private final UserRepository userRepository;
-
-
-//    @Autowired
-//    public void setSpecialistRepository(SpecialistRepository specialistRepository) {
-//        this.specialistRepository = specialistRepository;
-//    }
-//
-//    @Autowired
-//    public void setClientRepository(ClientRepository clientRepository) {
-//        this.clientRepository = clientRepository;
-//    }
-
-    /* get specialist dto by login for controller*/
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "specialists", key = "#login")
     public SpecialistDto getModelViewByLogin(String login) throws NotFoundLoginException {
         var specialistModel = getModelIfExists(login, specialistRepository);
         List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
@@ -59,6 +50,7 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
+    @CacheEvict(value = "specialists", key = "#login")
     public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
         var specialist = getModelIfExists(login, specialistRepository);
         executeUpdates(updates, specialist);
@@ -66,6 +58,7 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
+    @CacheEvict(value = "specialists", key = "#login")
     public void deleteModel(String login) throws NotFoundLoginException {
         SpecialistModel specialist = getModelIfExists(login, specialistRepository);
 
@@ -78,13 +71,20 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
+    @Caching( evict = {
+            @CacheEvict(value = "specialists", key = "#specialistLogin"),
+            @CacheEvict(value = "clients", key = "#clientLogin"),})
     public void addChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
         specialistModel.addClient(clientModel);
     }
 
+    @Override
     @Transactional
+    @Caching( evict = {
+            @CacheEvict(value = "specialists", key = "#specialistLogin"),
+            @CacheEvict(value = "clients", key = "#clientLogin"),})
     public void removeChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
@@ -103,6 +103,20 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
                 case "lastName":
                     if (value instanceof String) {
                         currentSpecialist.setLastName((String) value);
+                    }
+                    break;
+                case "city":
+                    if (value instanceof String) {
+                        currentSpecialist.setCity((String) value);
+                    }
+                    break;
+                case "age":
+                    if (value instanceof String) {
+                        if (isNumeric(value)) {
+                            currentSpecialist.setAge((int) value);
+                        } else {
+                            throw new BadRequestException(key + " should be an integer");
+                        }
                     }
                     break;
                 case "type":
@@ -133,15 +147,23 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     SpecialistDto doMapModelDtoAndGet(SpecialistModel specialistModel, List<String> listOfClientsLogin) {
-        return new SpecialistDto(specialistModel.getLogin(), specialistModel.getFirstName(), specialistModel.getLastName(),
-                specialistModel.getExperience(), specialistModel.getRate(), specialistModel.getType(),
+        return new SpecialistDto(
+                specialistModel.getLogin(), specialistModel.getFirstName(), specialistModel.getLastName(),
+                specialistModel.getCity(), specialistModel.getAge(), specialistModel.getExperience(),
+                specialistModel.getRate(), specialistModel.getType(),
                 specialistModel.getImgUrl(), specialistModel.getDescription(),
-                specialistModel.getReHub() != null ? specialistModel.getReHub().getLogin() : "", listOfClientsLogin);
+                specialistModel.getReHub() != null ? specialistModel.getReHub().getLogin() : "",
+                listOfClientsLogin);
     }
 
-    @Override
-    SpecialistModel loadModel(String login) throws NotFoundLoginException {
-        return null;
-    }
 
+    private static boolean isNumeric(Object str){
+        try {
+            // Attempt to parse the string to an integer
+            Integer.parseInt((String) str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }

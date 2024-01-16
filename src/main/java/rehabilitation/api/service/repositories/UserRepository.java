@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<UserModel, String>, Common
 
 
     @Query("select distinct new rehabilitation.api.service.dto.UserDto(" +
-            "u.login, u.email, u.firstName, u.lastName, u.contactInformation, " +
+            "u.login, u.email, u.contactInformation, " +
             "u.address, u.imgUrl) " +
             "from UserModel u " +
             "where u.login = :login")

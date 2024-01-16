@@ -1,8 +1,11 @@
 package rehabilitation.api.service.business;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,37 +26,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    private ReHubRepository reHubRepository;
-    private ClientRepository clientRepository;
-    private SpecialistRepository specialistRepository;
-    private UserRepository userRepository;
+    private final ReHubRepository reHubRepository;
+    private final ClientRepository clientRepository;
+    private final SpecialistRepository specialistRepository;
+    private final UserRepository userRepository;
     private AuthenticationManager authenticationManager;
     private UserService userService;
     private JwtTokenUtils jwtTokenUtils;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public void setReHubRepository(ReHubRepository reHubRepository) {
-        this.reHubRepository = reHubRepository;
-    }
-    @Autowired
-    public void setClientRepository(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
-    @Autowired
-    public void setSpecialistRepository(SpecialistRepository specialistRepository) {
-        this.specialistRepository = specialistRepository;
-    }
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {this.authenticationManager = authenticationManager;}
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -71,7 +57,7 @@ public class AuthService {
     public AuthenticationResponse signIn(AuthenticateDto authenticateDto) throws WrongPasswordOrLoginException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticateDto.login(), authenticateDto.password()));
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             throw new WrongPasswordOrLoginException("Wrong user or password");
         }
         UserDetails userDetails = userService.loadUserByUsername(authenticateDto.login());
@@ -82,6 +68,7 @@ public class AuthService {
                 userDto
         );
     }
+
 
     @Transactional
     public UserModel signUp(RegistrationDto registrationDto) throws AlreadyExistLoginException, PasswordRegistryException, BadRequestException {
@@ -119,13 +106,23 @@ public class AuthService {
                 reHubRepository.save(rehub);
                 return rehub;
             }
+            case ADMIN -> {
+                var admin = new UserModel();
+                admin.setLogin(registrationDto.login());
+                admin.setEmail(registrationDto.email());
+                admin.setPassword(passwordEncoder.encode(registrationDto.password()));
+                var role = new UserRole(Role.ROLE_ADMIN, admin);
+                admin.getRoles().add(role);
+                userRepository.save(admin);
+                return admin;
+            }
             default -> throw new BadRequestException("Type of user " + registrationDto.userType() + " is incorrect");
         }
 
 
     }
 
-    public void validateUser(RegistrationDto registrationDto) throws AlreadyExistLoginException {
+    private void validateUser(RegistrationDto registrationDto) throws AlreadyExistLoginException {
         if (userRepository.existsByLogin(registrationDto.login())) {
             throw new AlreadyExistLoginException(registrationDto.login());
         }
@@ -134,7 +131,7 @@ public class AuthService {
         }
     }
 
-    public void validateRequest(RegistrationDto registrationDto) throws PasswordRegistryException {
+    private void validateRequest(RegistrationDto registrationDto) throws PasswordRegistryException {
         if (!registrationDto.password().equals(registrationDto.confirmedPassword())) {
             throw new PasswordRegistryException();
         }

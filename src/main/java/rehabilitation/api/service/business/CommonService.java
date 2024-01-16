@@ -121,7 +121,4 @@ public abstract class CommonService<Model extends UserModel, Dto>  {
         return true;
     }
 
-
-
-    abstract Model loadModel(String login) throws NotFoundLoginException;
 }

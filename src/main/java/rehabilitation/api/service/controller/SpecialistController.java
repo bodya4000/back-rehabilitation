@@ -1,5 +1,6 @@
 package rehabilitation.api.service.controller;
 
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.business.SpecialistService;
 import rehabilitation.api.service.dto.RegistrationDto;
+import rehabilitation.api.service.dto.SearchDto;
 import rehabilitation.api.service.dto.SpecialistDto;
 import rehabilitation.api.service.business.ClientService;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
@@ -36,7 +38,8 @@ public class SpecialistController {
      * This method returns all specialists from database
      * */
     @GetMapping("/specialist")
-    public List<SpecialistDto> getAllBy() {
+    @RolesAllowed("ADMIN")
+    public List<SpecialistDto> getAllSpecialists() {
         return specialistService.getAllModelView();
     }
 
@@ -86,5 +89,14 @@ public class SpecialistController {
         specialistService.removeChild(specialistLogin, clientLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
+//    @GetMapping
+//    public ResponseEntity<SpecialistDto> getSpecialistBySearch(
+//            @Nonnull @RequestBody SearchDto searchDto
+//    ) {
+//
+//        return null;
+//    }
 
 }

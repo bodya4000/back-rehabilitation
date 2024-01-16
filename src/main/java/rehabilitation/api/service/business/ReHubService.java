@@ -2,6 +2,9 @@ package rehabilitation.api.service.business;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +34,6 @@ import java.util.stream.Collectors;
 public class ReHubService extends CommonService<ReHubModel, RehubDto>{
     private final ReHubRepository reHubRepository;
     private final SpecialistRepository specialistRepository;
-    private final UserRepository userRepository;
 
 
     @Override
@@ -39,18 +41,14 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
     public List<RehubDto> getAllModelView() {
         List<ReHubModel> reHubModels = reHubRepository.findAllBy();
         return reHubModels.stream().map(reModel -> {
-            List<String> listOfSpecialistsLogin = reModel.getSpecialists()
-                    .stream()
-                    .map(SpecialistModel::getLogin)
-                    .toList();
-
-
+            List<String> listOfSpecialistsLogin = reModel.getListOfSpecialistsLogin();
             return doMapModelDtoAndGet(reModel, listOfSpecialistsLogin);
         }).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "reHubs", key = "#login", unless = "#result == null ")
     public RehubDto getModelViewByLogin(String login) throws NotFoundLoginException {
         var reModel = getModelIfExists(login, reHubRepository);
         List<String> listOfClientsLogin = reModel.getSpecialists()
@@ -61,6 +59,8 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
 
 
     @Override
+    @CacheEvict(value = "reHubs", key = "#login")
+    @Transactional
     public void deleteModel(String login) throws NotFoundLoginException {
         var reHubModel = getModelIfExists(login, reHubRepository);
         reHubRepository.delete(reHubModel);
@@ -68,6 +68,9 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
 
     @Override
     @Transactional
+    @Caching( evict = {
+            @CacheEvict(value = "reHubs", key = "#reHubLogin"),
+            @CacheEvict(value = "specialists", key = "#specialistLogin")})
     public void addChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
         var reHub = getModelIfExists(reHubLogin, reHubRepository);
         var specialist = getModelIfExists(specialistLogin, specialistRepository);
@@ -75,6 +78,10 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
     }
 
     @Override
+    @Transactional
+    @Caching( evict = {
+            @CacheEvict(value = "reHubs", key = "#reHubLogin"),
+            @CacheEvict(value = "specialists", key = "#specialistLogin")})
     public void removeChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
         var reHub = getModelIfExists(reHubLogin, reHubRepository);
         var specialist = getModelIfExists(specialistLogin, specialistRepository);
@@ -84,26 +91,17 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
     @Override
     RehubDto doMapModelDtoAndGet(ReHubModel reHubModel, List<String> listOfSpecialistLogin) {
         return new RehubDto(
-                reHubModel.getLogin(), reHubModel.getFirstName(),
+                reHubModel.getLogin(), reHubModel.getName(),
                 reHubModel.getEmail(), reHubModel.getAddress(),
                 reHubModel.getContactInformation(), reHubModel.getImgUrl(),
                 listOfSpecialistLogin);
     }
 
-    @Override
-    ReHubModel loadModel(String login) throws NotFoundLoginException {
-        return null;
-    }
 
     @Override
     void executeUpdates(Map<String, Object> updates, ReHubModel currentReHub) {
         updates.forEach((key, value) -> {
             switch (key) {
-                case "firstName":
-                    if (value instanceof String) {
-                        currentReHub.setFirstName((String) value);
-                    }
-                    break;
                 case "address":
                     if (value instanceof String) {
                         currentReHub.setAddress((String) value);
@@ -122,6 +120,7 @@ public class ReHubService extends CommonService<ReHubModel, RehubDto>{
 
     @Override
     @Transactional
+    @CacheEvict(value = "reHubs", key = "#login")
     public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
         var currentClient = getModelIfExists(login, reHubRepository);
         executeUpdates(updates, currentClient);

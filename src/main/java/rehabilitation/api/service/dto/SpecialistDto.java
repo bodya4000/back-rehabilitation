@@ -7,6 +7,8 @@ public record SpecialistDto (
         String login,
         String firstName,
         String lastName,
+        String city,
+        int age,
         int experience,
         int rate,
         String type,

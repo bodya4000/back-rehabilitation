@@ -9,8 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//@ToString(exclude = "clients")
-@ToString
+@ToString(exclude = "clients")
 //@EqualsAndHashCode(of = "login")
 @Setter@Getter
 @AllArgsConstructor
@@ -18,6 +17,13 @@ import java.util.Set;
 @Table(name = "specialists")
 @Entity
 public class SpecialistModel extends UserModel {
+    private String firstName;
+
+    private String lastName;
+
+    private String city;
+
+    private Integer age;
 
     @Column
     private int experience;
@@ -40,7 +46,7 @@ public class SpecialistModel extends UserModel {
 
     @JoinColumn(name = "re_hub_login")
     @JsonIgnoreProperties({"reHub, specialists"})
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ReHubModel reHub;
 
     public void addClient(ClientModel client) {
@@ -51,6 +57,10 @@ public class SpecialistModel extends UserModel {
     public void removeClient(ClientModel client) {
         clients.remove(client);
         client.getSpecialists().remove(this);
+    }
+
+    public List<String> getListOfClientsLogin(){
+        return clients.stream().map(UserModel::getLogin).toList();
     }
 
 }

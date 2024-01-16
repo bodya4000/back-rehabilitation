@@ -10,6 +10,7 @@ import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginExcep
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.repositories.ReHubRepository;
 import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class UserService implements UserDetailsService {
     private final ClientRepository clientRepository;
     private final ReHubRepository reHubRepository;
     private final SpecialistRepository specialistRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
@@ -30,7 +32,8 @@ public class UserService implements UserDetailsService {
             UserModel user = Stream.of(
                             clientRepository.findByLogin(login),
                             specialistRepository.findByLogin(login),
-                            reHubRepository.findByLogin(login)
+                            reHubRepository.findByLogin(login),
+                            userRepository.findByLogin(login)
                     )
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -41,8 +44,7 @@ public class UserService implements UserDetailsService {
             return new org.springframework.security.core.userdetails.User(
                     user.getLogin(),
                     user.getPassword(),
-//                    user.getRoles()
-                    new ArrayList<>()
+                    user.getRoles()
             );
         } catch (NotFoundLoginException e) {
             throw new UsernameNotFoundException(e.getMessage());

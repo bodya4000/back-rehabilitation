@@ -14,10 +14,10 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<ClientModel, String>, CommonRepository<ClientModel> {
 
     // todo its important to fetch child objects to avoid extra queries to db
-    @Query("select c from ClientModel c left join fetch c.specialists")
+    @Query("select distinct c from ClientModel c left join fetch c.specialists")
     List<ClientModel> findAllBy();
 
-    @Query("select c from ClientModel c left join fetch c.specialists where c.login=:login")
+    @Query("select distinct c from ClientModel c left join fetch c.specialists where c.login=:login")
     Optional<ClientModel> findByLogin(@Param("login") String login);
 
 

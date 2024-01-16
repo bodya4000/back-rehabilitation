@@ -6,6 +6,7 @@ import lombok.*;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "re_hubs")
 public class ReHubModel extends UserModel {
+    private String name;
 
     private int rating;
 //    @ElementCollection
@@ -22,7 +24,7 @@ public class ReHubModel extends UserModel {
 
     @JsonIgnoreProperties({"specialists, reHub"})
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reHub", cascade = CascadeType.MERGE)
-    private Set<SpecialistModel> specialists;
+    private Set<SpecialistModel> specialists = new HashSet<>();
 
     public void addSpecialist(SpecialistModel specialist) {
         specialists.add(specialist);
@@ -32,5 +34,9 @@ public class ReHubModel extends UserModel {
     public void removeSpecialist(SpecialistModel specialist) {
         specialists.remove(specialist);
         specialist.setReHub(null);
+    }
+
+    public List<String> getListOfSpecialistsLogin(){
+        return specialists.stream().map(SpecialistModel::getLogin).toList();
     }
 }
