@@ -36,4 +36,8 @@ public interface SpecialistRepository extends JpaRepository<SpecialistModel, Lon
     @Override
     @Query("select distinct s from SpecialistModel s left join fetch s.roles where s.login=:login")
     Optional<SpecialistModel> findByLoginFetchRoles(String login);
+
+    Optional<List<SpecialistModel>> findByCityAndAgeAndSpecialityContainingAllIgnoreCase
+            (String city, Integer age, String speciality);
+
 }

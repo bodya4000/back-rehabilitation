@@ -6,11 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import rehabilitation.api.service.dto.AuthenticateDto;
 import rehabilitation.api.service.dto.ClientDto;
-import rehabilitation.api.service.business.ClientService;
-import rehabilitation.api.service.dto.JwtResponse;
-import rehabilitation.api.service.dto.RegistrationDto;
+import rehabilitation.api.service.business.businessServices.clientBusiness.ClientService;
 import rehabilitation.api.service.exceptionHandling.exception.*;
 
 import java.util.*;
@@ -45,7 +42,7 @@ public class ClientController {
     @GetMapping("/client/{login}")
     @PreAuthorize("isAuthenticated()")
     public ClientDto getClientById(@PathVariable("login") String login) throws NotFoundLoginException {
-        return clientService.getModelViewByLogin(login);
+        return clientService.getModelDtoByLogin(login);
     }
 
     /*

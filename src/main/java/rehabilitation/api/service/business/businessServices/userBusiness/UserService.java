@@ -1,4 +1,4 @@
-package rehabilitation.api.service.business;
+package rehabilitation.api.service.business.businessServices.userBusiness;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

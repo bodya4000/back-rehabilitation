@@ -11,8 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.parameters.P;
-import rehabilitation.api.service.business.SpecialistService;
+import rehabilitation.api.service.business.businessServices.specialistBusiness.SpecialistService;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.dto.SpecialistDto;
 import rehabilitation.api.service.entity.*;
@@ -151,7 +150,7 @@ class SpecialistServiceTest {
         Mockito.when(specialistRepository.findByLogin(specialistLogin)).thenReturn(Optional.of(specialistModel));
 
         //when
-        SpecialistDto specialistDto = underTest.getModelViewByLogin(specialistLogin);
+        SpecialistDto specialistDto = underTest.getModelDtoByLogin(specialistLogin);
 
         //then
         assertDtoAccordingToTheSpecialist(specialistDto, specialistModel);

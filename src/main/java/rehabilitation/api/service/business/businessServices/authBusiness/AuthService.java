@@ -1,6 +1,5 @@
-package rehabilitation.api.service.business;
+package rehabilitation.api.service.business.businessServices.authBusiness;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rehabilitation.api.service.business.businessServices.userBusiness.UserService;
+import rehabilitation.api.service.business.businessUtils.RegistrationService;
 import rehabilitation.api.service.dto.*;
 import rehabilitation.api.service.entity.*;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
@@ -22,16 +23,11 @@ import rehabilitation.api.service.repositories.SpecialistRepository;
 import rehabilitation.api.service.repositories.UserRepository;
 import rehabilitation.api.service.util.JwtTokenUtils;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final ReHubRepository reHubRepository;
-    private final ClientRepository clientRepository;
-    private final SpecialistRepository specialistRepository;
+    private final RegistrationService registrationService;
     private final UserRepository userRepository;
     private AuthenticationManager authenticationManager;
     private UserService userService;
@@ -77,34 +73,14 @@ public class AuthService {
 
         switch (registrationDto.userType()){
             case CLIENT -> {
-                var client = new ClientModel();
-                client.setLogin(registrationDto.login());
-                client.setEmail(registrationDto.email());
-                client.setPassword(passwordEncoder.encode(registrationDto.password()));
-                var role = new UserRole(Role.ROLE_CLIENT, client);
-                client.getRoles().add(role);
-                clientRepository.save(client);
-                return client;
+                return registrationService.registerClient(registrationDto);
             }
             case SPECIALIST -> {
-                var specialist = new SpecialistModel();
-                specialist.setLogin(registrationDto.login());
-                specialist.setEmail(registrationDto.email());
-                specialist.setPassword(passwordEncoder.encode(registrationDto.password()));
-                var role = new UserRole(Role.ROLE_SPECIALIST, specialist);
-                specialist.getRoles().add(role);
-                specialistRepository.save(specialist);
-                return specialist;
+                return registrationService.registerSpecialist(registrationDto);
+
             }
             case REHUB -> {
-                var rehub = new ReHubModel();
-                rehub.setLogin(registrationDto.login());
-                rehub.setEmail(registrationDto.email());
-                rehub.setPassword(passwordEncoder.encode(registrationDto.password()));
-                var role = new UserRole(Role.ROLE_REHUB, rehub);
-                rehub.getRoles().add(role);
-                reHubRepository.save(rehub);
-                return rehub;
+                return registrationService.registerReHub(registrationDto);
             }
             case ADMIN -> {
                 var admin = new UserModel();
@@ -121,6 +97,7 @@ public class AuthService {
 
 
     }
+
 
     private void validateUser(RegistrationDto registrationDto) throws AlreadyExistLoginException {
         if (userRepository.existsByLogin(registrationDto.login())) {

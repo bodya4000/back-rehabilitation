@@ -50,5 +50,4 @@ public class ClientModel extends UserModel {
     public List<String> getListOfSpecialistsLogin(){
         return specialists.stream().map(SpecialistModel::getLogin).toList();
     }
-
 }

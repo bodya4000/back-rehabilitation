@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Import;
-import rehabilitation.api.service.business.ClientService;
+import rehabilitation.api.service.business.businessServices.clientBusiness.ClientService;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.dto.ClientDto;
 import rehabilitation.api.service.entity.*;
@@ -131,7 +131,7 @@ class ClientServiceTest {
         Mockito.when(clientRepository.findByLogin(clientLogin)).thenReturn(Optional.of(clientModel));
 
         //when
-        ClientDto clientDto = underTest.getModelViewByLogin(clientLogin);
+        ClientDto clientDto = underTest.getModelDtoByLogin(clientLogin);
 
         //then
         assertDtoAccordingToTheClient(clientDto, clientModel);

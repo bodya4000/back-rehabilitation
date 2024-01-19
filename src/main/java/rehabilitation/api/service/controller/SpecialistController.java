@@ -8,12 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import rehabilitation.api.service.business.SpecialistService;
-import rehabilitation.api.service.dto.RegistrationDto;
+import rehabilitation.api.service.business.businessServices.specialistBusiness.SpecialistService;
 import rehabilitation.api.service.dto.SearchDto;
 import rehabilitation.api.service.dto.SpecialistDto;
-import rehabilitation.api.service.business.ClientService;
-import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
+import rehabilitation.api.service.business.businessServices.clientBusiness.ClientService;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.repositories.SpecialistRepository;
 
@@ -27,12 +25,6 @@ public class SpecialistController {
 
     @Autowired
     private SpecialistService specialistService;
-
-    @Autowired
-    private ClientService clientService;
-
-    @Autowired
-    private SpecialistRepository specialistRepository;
 
     /*
      * This method returns all specialists from database
@@ -49,7 +41,7 @@ public class SpecialistController {
 
     @GetMapping("/specialist/{login}")
     public SpecialistDto getSpecialistById(@PathVariable("login") String login) throws NotFoundLoginException {
-        return specialistService.getModelViewByLogin(login);
+        return specialistService.getModelDtoByLogin(login);
     }
 
 
@@ -91,12 +83,12 @@ public class SpecialistController {
     }
 
 
-//    @GetMapping
-//    public ResponseEntity<SpecialistDto> getSpecialistBySearch(
-//            @Nonnull @RequestBody SearchDto searchDto
-//    ) {
-//
-//        return null;
-//    }
+    @GetMapping
+    public ResponseEntity<SpecialistDto> getSpecialistBySearch(
+            @Nonnull @RequestBody SearchDto searchDto
+    ) {
+
+        return null;
+    }
 
 }

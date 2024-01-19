@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Import;
-import rehabilitation.api.service.business.ReHubService;
+import rehabilitation.api.service.business.businessServices.reHubBusiness.ReHubService;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.dto.RehubDto;
 import rehabilitation.api.service.entity.*;
@@ -136,7 +136,7 @@ class ReHubServiceTest {
         Mockito.when(reHubRepository.findByLogin(rehubLogin)).thenReturn(Optional.of(reHubModel));
 
         //when
-        RehubDto rehubDto = underTest.getModelViewByLogin(rehubLogin);
+        RehubDto rehubDto = underTest.getModelDtoByLogin(rehubLogin);
 
         //then
         assertDtoAccordingToTheSpecialist(rehubDto, reHubModel);

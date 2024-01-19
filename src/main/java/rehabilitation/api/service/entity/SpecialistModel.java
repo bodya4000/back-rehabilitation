@@ -35,7 +35,7 @@ public class SpecialistModel extends UserModel {
     private String description;
 
     @Column
-    private String type;
+    private String speciality;
 
 //    @OneToMany(mappedBy = "login", cascade = CascadeType.ALL)
 //    private Set<UserRole> roles = new HashSet<>();

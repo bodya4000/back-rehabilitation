@@ -1,56 +1,31 @@
-package rehabilitation.api.service.business;
+package rehabilitation.api.service.business.businessServices.specialistBusiness.crud;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rehabilitation.api.service.dto.RegistrationDto;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
-import rehabilitation.api.service.exceptionHandling.exception.BadRequestException;
-import rehabilitation.api.service.repositories.ClientRepository;
+import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
 import rehabilitation.api.service.dto.SpecialistDto;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.entity.ClientModel;
+import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.entity.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.BadRequestException;
+import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.repositories.SpecialistRepository;
-import rehabilitation.api.service.repositories.UserRepository;
+import static rehabilitation.api.service.business.businessUtils.ModelValidationUtils.*;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SpecialistService extends CommonService<SpecialistModel, SpecialistDto> {
-
+public class SpecialistCrudService extends ModelService<SpecialistModel> {
     private final SpecialistRepository specialistRepository;
     private final ClientRepository clientRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    @Cacheable(value = "specialists", key = "#login")
-    public SpecialistDto getModelViewByLogin(String login) throws NotFoundLoginException {
-        var specialistModel = getModelIfExists(login, specialistRepository);
-        List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
-        return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
-    }
-
-    /* get specialist dto by login for controller*/
-    @Override
-    @Transactional(readOnly = true)
-    public List<SpecialistDto> getAllModelView() {
-        List<SpecialistModel> specialistModels = specialistRepository.findAllBy();
-        return specialistModels.stream().map(specialistModel -> {
-            List<String> listOfClientsLogin = specialistModel.getClients().stream().map(ClientModel::getLogin).collect(Collectors.toList());
-            return doMapModelDtoAndGet(specialistModel, listOfClientsLogin);
-        }).collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
-    @CacheEvict(value = "specialists", key = "#login")
     public void updateModel(String login, Map<String, Object> updates) throws NotFoundLoginException {
         var specialist = getModelIfExists(login, specialistRepository);
         executeUpdates(updates, specialist);
@@ -58,7 +33,6 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
-    @CacheEvict(value = "specialists", key = "#login")
     public void deleteModel(String login) throws NotFoundLoginException {
         SpecialistModel specialist = getModelIfExists(login, specialistRepository);
 
@@ -71,9 +45,6 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
-    @Caching( evict = {
-            @CacheEvict(value = "specialists", key = "#specialistLogin"),
-            @CacheEvict(value = "clients", key = "#clientLogin"),})
     public void addChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
@@ -82,9 +53,6 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
 
     @Override
     @Transactional
-    @Caching( evict = {
-            @CacheEvict(value = "specialists", key = "#specialistLogin"),
-            @CacheEvict(value = "clients", key = "#clientLogin"),})
     public void removeChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
@@ -92,7 +60,8 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
     }
 
     @Override
-    void executeUpdates(Map<String, Object> updates, SpecialistModel currentSpecialist) {
+    protected void executeUpdates(Map<String, Object> updates, UserModel currentUser) {
+        var currentSpecialist = (SpecialistModel) currentUser;
         updates.forEach((key, value) -> {
             switch (key) {
                 case "firstName":
@@ -144,18 +113,6 @@ public class SpecialistService extends CommonService<SpecialistModel, Specialist
             }
         });
     }
-
-    @Override
-    SpecialistDto doMapModelDtoAndGet(SpecialistModel specialistModel, List<String> listOfClientsLogin) {
-        return new SpecialistDto(
-                specialistModel.getLogin(), specialistModel.getFirstName(), specialistModel.getLastName(),
-                specialistModel.getCity(), specialistModel.getAge(), specialistModel.getExperience(),
-                specialistModel.getRate(), specialistModel.getType(),
-                specialistModel.getImgUrl(), specialistModel.getDescription(),
-                specialistModel.getReHub() != null ? specialistModel.getReHub().getLogin() : "",
-                listOfClientsLogin);
-    }
-
 
     private static boolean isNumeric(Object str){
         try {

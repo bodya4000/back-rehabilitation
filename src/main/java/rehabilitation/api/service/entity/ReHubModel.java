@@ -17,6 +17,8 @@ import java.util.Set;
 public class ReHubModel extends UserModel {
     private String name;
 
+    private String city;
+
     private int rating;
 //    @ElementCollection
 //    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "rehub_login"))

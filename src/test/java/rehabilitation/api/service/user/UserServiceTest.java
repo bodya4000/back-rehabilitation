@@ -2,21 +2,17 @@ package rehabilitation.api.service.user;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import rehabilitation.api.service.business.UserService;
+import rehabilitation.api.service.business.businessServices.userBusiness.UserService;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.entity.*;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 import rehabilitation.api.service.repositories.ClientRepository;
 import rehabilitation.api.service.repositories.ReHubRepository;
 import rehabilitation.api.service.repositories.SpecialistRepository;
