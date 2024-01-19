@@ -4,32 +4,26 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-//@ToString(exclude = "clients")
-@ToString
+@ToString(exclude = "clients")
 //@EqualsAndHashCode(of = "login")
 @Setter@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "specialists")
 @Entity
-public class SpecialistModel extends BaseModel {
-    @Id
-    private String login;
-
-    @Column(nullable = false)
+public class SpecialistModel extends UserModel {
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String city;
 
-    @Column(nullable = false)
-    private String contactInformation;
+    private Integer age;
 
     @Column
     private int experience;
@@ -40,10 +34,11 @@ public class SpecialistModel extends BaseModel {
     @Column
     private String description;
 
-    private String imgUrl;
-
     @Column
-    private String type;
+    private String speciality;
+
+//    @OneToMany(mappedBy = "login", cascade = CascadeType.ALL)
+//    private Set<UserRole> roles = new HashSet<>();
 
     @JsonIgnoreProperties({"specialists"})
     @ManyToMany(mappedBy = "specialists", fetch = FetchType.LAZY)
@@ -51,7 +46,7 @@ public class SpecialistModel extends BaseModel {
 
     @JoinColumn(name = "re_hub_login")
     @JsonIgnoreProperties({"reHub, specialists"})
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ReHubModel reHub;
 
     public void addClient(ClientModel client) {
@@ -62,6 +57,10 @@ public class SpecialistModel extends BaseModel {
     public void removeClient(ClientModel client) {
         clients.remove(client);
         client.getSpecialists().remove(this);
+    }
+
+    public List<String> getListOfClientsLogin(){
+        return clients.stream().map(UserModel::getLogin).toList();
     }
 
 }

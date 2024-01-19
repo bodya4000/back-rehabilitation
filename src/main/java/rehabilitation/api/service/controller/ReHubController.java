@@ -1,15 +1,14 @@
 package rehabilitation.api.service.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.dto.RehubDto;
-import rehabilitation.api.service.entity.ReHubModel;
-import rehabilitation.api.service.business.ReHubService;
-import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
+import rehabilitation.api.service.business.businessServices.reHubBusiness.ReHubService;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.exceptionHandling.exception.NullLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -24,25 +23,18 @@ public class ReHubController{
     private ReHubService reHubService;
 
     @GetMapping("/rehub")
+    @RolesAllowed("ADMIN")
     public List<RehubDto> getAllReHubs(){
         return reHubService.getAllModelView();
     }
 
     @GetMapping("/rehub/{login}")
     public RehubDto getByLogin(@PathVariable("login") String login) throws NotFoundLoginException {
-        return reHubService.getModelViewByLogin(login);
-    }
-
-    @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody ReHubModel reHubModel
-    ) throws AlreadyExistLoginException, NullLoginException {
-        reHubService.saveModel(reHubModel);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
+        return reHubService.getModelDtoByLogin(login);
     }
 
     @PatchMapping("{login}")
+    @PreAuthorize("#login == authentication.principal")
     public ResponseEntity<String> update(
             @PathVariable("login") String login,
             @RequestBody Map<String, Object> updates
@@ -54,6 +46,7 @@ public class ReHubController{
     }
 
     @DeleteMapping("/rehub/{login}")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<Integer> delete(@PathVariable("login") String login) throws NotFoundLoginException {
         reHubService.deleteModel(login);
         return ResponseEntity
@@ -62,6 +55,7 @@ public class ReHubController{
     }
 
     @PostMapping("/{rehubLogin}/specialist/{specialistLogin}")
+    @PreAuthorize("#rehubLogin == authentication.principal")
     public ResponseEntity<Integer> addNewSpecialist(
             @PathVariable String rehubLogin,
             @PathVariable String specialistLogin
@@ -71,6 +65,7 @@ public class ReHubController{
     }
 
     @DeleteMapping("/{rehubLogin}/specialist/{specialistLogin}")
+    @PreAuthorize("#rehubLogin == authentication.principal")
     public ResponseEntity<Integer> removeNewSpecialist(
             @PathVariable("rehubLogin") String rehubLogin,
             @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {

@@ -10,7 +10,7 @@ public class AlreadyExistLoginException extends Exception{
     }
 
     public AlreadyExistLoginException(SpecialistModel specialistModel) {
-        super("there is already exists " + specialistModel.getLogin());
+        super("Already exists " + specialistModel.getLogin());
     }
 
     public AlreadyExistLoginException(ClientModel clientModel) {

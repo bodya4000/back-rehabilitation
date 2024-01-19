@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @ToString(exclude = "specialists")
 @Setter
@@ -13,30 +12,16 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
-public class ClientModel extends BaseModel{
-    @Id
-    private String login;
-
-    @Column(nullable = false)
+public class ClientModel extends UserModel {
+    @Column(nullable = true)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column
-    private String address;
-
-    @Column(nullable = false)
-    private String contactInformation;
-
-    private String imgUrl;
 
     @Setter(AccessLevel.PRIVATE)
     @JsonIgnoreProperties({"clients"})
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JoinTable(
             name = "clients_specialists",
             joinColumns = {
@@ -60,5 +45,9 @@ public class ClientModel extends BaseModel{
     public void removeSpecialist(SpecialistModel specialist) {
         specialists.remove(specialist);
         specialist.getClients().remove(this);
+    }
+
+    public List<String> getListOfSpecialistsLogin(){
+        return specialists.stream().map(SpecialistModel::getLogin).toList();
     }
 }

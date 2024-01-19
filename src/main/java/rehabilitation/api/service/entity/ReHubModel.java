@@ -1,41 +1,32 @@
 package rehabilitation.api.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @ToString(exclude = "specialists")
 @Setter@Getter
 @Entity
 @Table(name = "re_hubs")
-public class ReHubModel extends BaseModel{
-
-    @Id
-    private String login;
-
-    @Column(nullable = false)
+public class ReHubModel extends UserModel {
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private String contactInformation;
-
-    private String imgUrl;
+    private String city;
 
     private int rating;
+//    @ElementCollection
+//    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "rehub_login"))
+//    private List<Role> roles = new ArrayList<>();
 
     @JsonIgnoreProperties({"specialists, reHub"})
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reHub", cascade = CascadeType.MERGE)
-    private Set<SpecialistModel> specialists;
+    private Set<SpecialistModel> specialists = new HashSet<>();
 
     public void addSpecialist(SpecialistModel specialist) {
         specialists.add(specialist);
@@ -45,5 +36,9 @@ public class ReHubModel extends BaseModel{
     public void removeSpecialist(SpecialistModel specialist) {
         specialists.remove(specialist);
         specialist.setReHub(null);
+    }
+
+    public List<String> getListOfSpecialistsLogin(){
+        return specialists.stream().map(SpecialistModel::getLogin).toList();
     }
 }
