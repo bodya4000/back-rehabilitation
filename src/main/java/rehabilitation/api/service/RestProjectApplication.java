@@ -2,11 +2,13 @@ package rehabilitation.api.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableJpaRepositories({"rehabilitation.api.service.repositories"})
+@EnableElasticsearchRepositories(basePackages = "rehabilitation.api.service.repositories.elasticsearch")
+@EnableJpaRepositories({"rehabilitation.api.service.repositories.jpa"})
 @EnableTransactionManagement
 public class RestProjectApplication {
 

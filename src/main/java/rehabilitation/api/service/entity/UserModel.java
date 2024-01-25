@@ -18,7 +18,7 @@ import java.util.Set;
 public class UserModel {
 
     @Id
-    private String login;
+    protected String login;
 
     @Column(nullable = false)
     private String password;

@@ -4,10 +4,10 @@ package rehabilitation.api.service.utills;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import rehabilitation.api.service.entity.*;
-import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.ReHubRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
-import rehabilitation.api.service.repositories.UserRepository;
+import rehabilitation.api.service.repositories.jpa.ClientRepository;
+import rehabilitation.api.service.repositories.jpa.ReHubRepository;
+import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
+import rehabilitation.api.service.repositories.jpa.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;

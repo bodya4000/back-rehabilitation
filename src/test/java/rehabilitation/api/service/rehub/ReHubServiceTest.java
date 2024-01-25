@@ -13,11 +13,11 @@ import org.springframework.boot.test.context.TestComponent;
 import org.springframework.context.annotation.Import;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.ReHubService;
 import rehabilitation.api.service.config.ConfigTest;
-import rehabilitation.api.service.dto.RehubDto;
+import rehabilitation.api.service.dto.entities.RehubDto;
 import rehabilitation.api.service.entity.*;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.repositories.ReHubRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.jpa.ReHubRepository;
+import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
 import java.util.*;
 

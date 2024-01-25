@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
-import rehabilitation.api.service.entity.ClientModel;
 import rehabilitation.api.service.entity.ReHubModel;
 import rehabilitation.api.service.entity.SpecialistModel;
 import rehabilitation.api.service.entity.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.ReHubRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.jpa.ReHubRepository;
+import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
-package rehabilitation.api.service.repositories;
+package rehabilitation.api.service.repositories.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import rehabilitation.api.service.dto.UserDto;
+import rehabilitation.api.service.dto.entities.UserDto;
 import rehabilitation.api.service.entity.UserModel;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<UserModel, String>, Common
     Optional<UserModel> findByLogin(@Param("login") String login);
 
 
-    @Query("select distinct new rehabilitation.api.service.dto.UserDto(" +
+    @Query("select distinct new rehabilitation.api.service.dto.entities.UserDto(" +
             "u.login, u.email, u.contactInformation, " +
             "u.address, u.imgUrl) " +
             "from UserModel u " +

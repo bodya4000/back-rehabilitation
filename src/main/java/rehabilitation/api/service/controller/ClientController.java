@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import rehabilitation.api.service.dto.ClientDto;
+import rehabilitation.api.service.dto.entities.ClientDto;
 import rehabilitation.api.service.business.businessServices.clientBusiness.ClientService;
 import rehabilitation.api.service.exceptionHandling.exception.*;
 

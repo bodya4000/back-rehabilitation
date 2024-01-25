@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import rehabilitation.api.service.business.businessServices.clientBusiness.crud.ClientCrudService;
 import rehabilitation.api.service.business.businessServices.clientBusiness.view.ClientViewService;
-import rehabilitation.api.service.dto.ClientDto;
+import rehabilitation.api.service.dto.entities.ClientDto;
 
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 

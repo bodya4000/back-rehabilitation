@@ -3,7 +3,7 @@ package rehabilitation.api.service.business.businessUtils;
 import rehabilitation.api.service.entity.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.repositories.CommonRepository;
+import rehabilitation.api.service.repositories.jpa.CommonRepository;
 
 public class ModelValidationUtils {
     /**
@@ -21,7 +21,6 @@ public class ModelValidationUtils {
 
     /**
      * Checks if the model's email and login exist in the database using the specified repository.
-     *
      //     * @param <AnyModel>  Generic model
      //     * @param anyModel    Model to be checked
      * @param repository  Model's repository handling SQL queries

@@ -1,4 +1,4 @@
-package rehabilitation.api.service.repositories;
+package rehabilitation.api.service.repositories.jpa;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

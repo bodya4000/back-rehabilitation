@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.business.businessServices.authBusiness.AuthService;
-import rehabilitation.api.service.dto.*;
+import rehabilitation.api.service.dto.auth.AuthenticateDto;
+import rehabilitation.api.service.dto.auth.AuthenticationResponse;
+import rehabilitation.api.service.dto.auth.RegistrationDto;
 import rehabilitation.api.service.entity.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.*;
 
