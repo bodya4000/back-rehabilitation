@@ -6,13 +6,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
 import rehabilitation.api.service.business.businessServices.specialistBusiness.crud.SpecialistCrudService;
 import rehabilitation.api.service.business.businessServices.specialistBusiness.view.SpecialistViewService;
-import rehabilitation.api.service.dto.SearchDto;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.dto.SpecialistDto;
-import rehabilitation.api.service.entity.UserModel;
+import rehabilitation.api.service.dto.entities.SpecialistDto;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package rehabilitation.api.service.dto;
+package rehabilitation.api.service.dto.entities;
 
 import java.util.List;
 import java.util.Set;
@@ -11,7 +11,7 @@ public record SpecialistDto (
         int age,
         int experience,
         int rate,
-        String type,
+        String speciality,
         String imgUrl,
         String description,
         String rehub,

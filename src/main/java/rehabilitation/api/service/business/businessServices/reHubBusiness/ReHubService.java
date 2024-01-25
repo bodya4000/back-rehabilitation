@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.crud.ReHubCrudService;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.view.ReHubViewService;
-import rehabilitation.api.service.dto.RehubDto;
+import rehabilitation.api.service.dto.entities.RehubDto;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
 
 import java.util.List;

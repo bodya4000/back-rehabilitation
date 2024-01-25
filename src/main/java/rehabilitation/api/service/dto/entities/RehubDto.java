@@ -1,4 +1,4 @@
-package rehabilitation.api.service.dto;
+package rehabilitation.api.service.dto.entities;
 
 import jakarta.persistence.Column;
 

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Import;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.entity.*;
 import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
-import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
+import rehabilitation.api.service.repositories.jpa.ClientRepository;
+import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 import rehabilitation.api.service.utills.GeneratingUtils;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package rehabilitation.api.service.dto;
+package rehabilitation.api.service.dto.auth;
 
 import rehabilitation.api.service.entity.Role;
 import rehabilitation.api.service.entity.UserType;

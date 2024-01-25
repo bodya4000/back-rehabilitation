@@ -1,7 +1,6 @@
 package rehabilitation.api.service.business.businessServices.authBusiness;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -10,17 +9,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.userBusiness.UserService;
-import rehabilitation.api.service.business.businessUtils.RegistrationService;
-import rehabilitation.api.service.dto.*;
+import rehabilitation.api.service.dto.auth.AuthenticateDto;
+import rehabilitation.api.service.dto.auth.AuthenticationResponse;
+import rehabilitation.api.service.dto.auth.JwtResponse;
+import rehabilitation.api.service.dto.auth.RegistrationDto;
+import rehabilitation.api.service.dto.entities.UserDto;
 import rehabilitation.api.service.entity.*;
 import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
 import rehabilitation.api.service.exceptionHandling.exception.BadRequestException;
 import rehabilitation.api.service.exceptionHandling.exception.PasswordRegistryException;
 import rehabilitation.api.service.exceptionHandling.exception.WrongPasswordOrLoginException;
-import rehabilitation.api.service.repositories.ClientRepository;
-import rehabilitation.api.service.repositories.ReHubRepository;
-import rehabilitation.api.service.repositories.SpecialistRepository;
-import rehabilitation.api.service.repositories.UserRepository;
+import rehabilitation.api.service.repositories.jpa.UserRepository;
 import rehabilitation.api.service.util.JwtTokenUtils;
 
 @Service
@@ -29,25 +28,10 @@ public class AuthService {
 
     private final RegistrationService registrationService;
     private final UserRepository userRepository;
-    private AuthenticationManager authenticationManager;
-    private UserService userService;
-    private JwtTokenUtils jwtTokenUtils;
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {this.authenticationManager = authenticationManager;}
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-    @Autowired
-    public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
-        this.jwtTokenUtils = jwtTokenUtils;
-    }
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Transactional(readOnly = true)
     public AuthenticationResponse signIn(AuthenticateDto authenticateDto) throws WrongPasswordOrLoginException {

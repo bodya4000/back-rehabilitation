@@ -3,27 +3,38 @@ package rehabilitation.api.service.entity;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @ToString(exclude = "clients")
-//@EqualsAndHashCode(of = "login")
 @Setter@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "specialists")
 @Entity
+@Document(indexName = "specialist_index")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SpecialistModel extends UserModel {
-    private String firstName;
+    @Id
+    private String searchId;
 
+    @Field(type = FieldType.Keyword)
+    private String login;
+    @Field(type = FieldType.Text)
+    private String firstName;
+    @Field(type = FieldType.Text)
     private String lastName;
 
     private String city;
 
-    private Integer age;
+    private int age;
 
     @Column
     private int experience;
@@ -37,13 +48,12 @@ public class SpecialistModel extends UserModel {
     @Column
     private String speciality;
 
-//    @OneToMany(mappedBy = "login", cascade = CascadeType.ALL)
-//    private Set<UserRole> roles = new HashSet<>();
-
-    @JsonIgnoreProperties({"specialists"})
+    @Transient
+    @JsonIgnoreProperties({"specialists, client"})
     @ManyToMany(mappedBy = "specialists", fetch = FetchType.LAZY)
     private Set<ClientModel> clients = new HashSet<>();
 
+    @Transient
     @JoinColumn(name = "re_hub_login")
     @JsonIgnoreProperties({"reHub, specialists"})
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -62,5 +72,4 @@ public class SpecialistModel extends UserModel {
     public List<String> getListOfClientsLogin(){
         return clients.stream().map(UserModel::getLogin).toList();
     }
-
 }
