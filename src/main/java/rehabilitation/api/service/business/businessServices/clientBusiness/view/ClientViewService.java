@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelViewService;
 import rehabilitation.api.service.business.businessUtils.MappingUtil;
 import rehabilitation.api.service.dto.entities.ClientDto;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ClientModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import static rehabilitation.api.service.business.businessUtils.ModelValidationU
 
 @Service
 @RequiredArgsConstructor
-public class ClientViewService extends ModelViewService<ClientModel, ClientDto> {
+public class ClientViewService extends ModelViewService<ClientDto> {
 
     private final ClientRepository clientRepository;
     private final MappingUtil mappingUtil;

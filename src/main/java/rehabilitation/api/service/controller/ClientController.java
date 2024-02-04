@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.dto.entities.ClientDto;
 import rehabilitation.api.service.business.businessServices.clientBusiness.ClientService;
-import rehabilitation.api.service.exceptionHandling.exception.*;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.util.*;
 
@@ -24,30 +24,18 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-
-    /*
-     * This method returns all clients from database
-     * */
-
     @GetMapping("/client")
     @RolesAllowed("ADMIN")
     public List<ClientDto> getClients() {
         return clientService.getAllModelView();
     }
 
-    /*
-     * This method returns a client by login from database
-     * */
 
     @GetMapping("/client/{login}")
     @PreAuthorize("isAuthenticated()")
     public ClientDto getClientById(@PathVariable("login") String login) throws NotFoundLoginException {
         return clientService.getModelDtoByLogin(login);
     }
-
-    /*
-     * This method updates a client by login in database and returns its json
-     * */
 
 
     @PatchMapping("/client/{login}")
@@ -56,10 +44,6 @@ public class ClientController {
         clientService.updateModel(login, updates);
         return ResponseEntity.status(HttpStatus.OK).body("client updated");
     }
-
-    /*
-     * This method deletes a client by login in database
-     * */
 
     @DeleteMapping("/client/{login}")
     @RolesAllowed("ADMIN")
@@ -74,7 +58,7 @@ public class ClientController {
     @PostMapping("/{clientLogin}/specialist/{specialistLogin}")
     @PreAuthorize("#clientLogin == authentication.principal.username")
     public ResponseEntity<Integer> addSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
-        clientService.addChild(clientLogin, specialistLogin);
+        clientService.addSpecialist(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -82,7 +66,7 @@ public class ClientController {
     @DeleteMapping("/{clientLogin}/specialist/{specialistLogin}")
     @PreAuthorize("#clientLogin == authentication.principal.username")
     public ResponseEntity<Integer> removeSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
-        clientService.removeChild(clientLogin, specialistLogin);
+        clientService.removeSpecialist(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

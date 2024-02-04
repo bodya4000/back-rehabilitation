@@ -7,8 +7,8 @@ import static rehabilitation.api.service.business.businessUtils.ModelValidationU
 
 import rehabilitation.api.service.business.businessUtils.MappingUtil;
 import rehabilitation.api.service.dto.entities.SpecialistDto;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SpecialistViewService extends ModelViewService<SpecialistModel, SpecialistDto> {
+public class SpecialistViewService extends ModelViewService<SpecialistDto> {
 
     private final SpecialistRepository specialistRepository;
     private final MappingUtil mappingUtil;

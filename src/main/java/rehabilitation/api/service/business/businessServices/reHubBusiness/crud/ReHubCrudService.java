@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
-import rehabilitation.api.service.entity.ReHubModel;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ReHubModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
@@ -40,17 +40,15 @@ public class ReHubCrudService extends ModelService<ReHubModel> {
         reHubRepository.delete(reHub);
     }
 
-    @Override
     @Transactional
-    public void addChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
+    public void addSpecialist(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
         ReHubModel reHubModel = getModelIfExists(reHubLogin, reHubRepository);
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         reHubModel.addSpecialist(specialistModel);
     }
 
-    @Override
     @Transactional
-    public void removeChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
+    public void removeSpecialist(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
         ReHubModel reHubModel = getModelIfExists(reHubLogin, reHubRepository);
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         reHubModel.removeSpecialist(specialistModel);

@@ -2,7 +2,7 @@ package rehabilitation.api.service.repositories.elasticsearch;
 
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Repository;
-import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
 
 @Repository
 public class SpecialistSearchRepositoryCustomImpl implements SpecialistSearchRepositoryCustom {

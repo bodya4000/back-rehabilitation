@@ -10,8 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.dto.entities.UserDto;
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.UserRepository;
 import rehabilitation.api.service.utills.GeneratingUtils;
 

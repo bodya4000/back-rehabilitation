@@ -3,7 +3,9 @@ package rehabilitation.api.service.utills;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
-import rehabilitation.api.service.entity.*;
+import rehabilitation.api.service.entity.sql.*;
+import rehabilitation.api.service.entity.sql.security.Role;
+import rehabilitation.api.service.entity.sql.security.UserRole;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;

@@ -11,7 +11,7 @@ import rehabilitation.api.service.business.businessServices.specialistBusiness.S
 import rehabilitation.api.service.business.businessServices.specialistBusiness.search.SearchSpecialistService;
 import rehabilitation.api.service.dto.SearchDto;
 import rehabilitation.api.service.dto.entities.SpecialistDto;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.io.IOException;
 import java.util.*;
@@ -57,19 +57,19 @@ public class SpecialistController {
 
     @PostMapping("/{specialistLogin}/client/{clientLogin}")
     @PreAuthorize("#specialistLogin == authentication.principal")
-    public ResponseEntity<Integer> addNewClient(
+    public ResponseEntity<Integer> addClient(
             @PathVariable("specialistLogin") String specialistLogin,
             @PathVariable("clientLogin") String clientLogin) throws NotFoundLoginException {
-        specialistService.addChild(specialistLogin, clientLogin);
+        specialistService.addClient(specialistLogin, clientLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{specialistLogin}/client/{clientLogin}")
     @PreAuthorize("#specialistLogin == authentication.principal")
-    public ResponseEntity<Integer> removeNewClient(
+    public ResponseEntity<Integer> removeClient(
             @PathVariable("clientLogin") String clientLogin,
             @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
-        specialistService.removeChild(specialistLogin, clientLogin);
+        specialistService.removeClient(specialistLogin, clientLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

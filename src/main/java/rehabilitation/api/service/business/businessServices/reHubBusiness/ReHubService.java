@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.crud.ReHubCrudService;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.view.ReHubViewService;
 import rehabilitation.api.service.dto.entities.RehubDto;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -43,16 +43,16 @@ public class ReHubService {
     @Caching( evict = {
             @CacheEvict(value = "reHubs", key = "#reHubLogin"),
             @CacheEvict(value = "specialists", key = "#specialistLogin")})
-    public void addChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
-        reHubCrudService.addChild(reHubLogin, specialistLogin);
+    public void addSpecialist(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
+        reHubCrudService.addSpecialist(reHubLogin, specialistLogin);
     }
 
     @Transactional
     @Caching( evict = {
             @CacheEvict(value = "reHubs", key = "#reHubLogin"),
             @CacheEvict(value = "specialists", key = "#specialistLogin")})
-    public void removeChild(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
-        reHubCrudService.removeChild(reHubLogin, specialistLogin);
+    public void removeSpecialist(String reHubLogin, String specialistLogin) throws NotFoundLoginException {
+        reHubCrudService.removeSpecialist(reHubLogin, specialistLogin);
     }
 
     @Transactional

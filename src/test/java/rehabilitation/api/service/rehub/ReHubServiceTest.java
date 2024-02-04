@@ -14,8 +14,11 @@ import org.springframework.context.annotation.Import;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.ReHubService;
 import rehabilitation.api.service.config.ConfigTest;
 import rehabilitation.api.service.dto.entities.RehubDto;
-import rehabilitation.api.service.entity.*;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ReHubModel;
+import rehabilitation.api.service.entity.sql.security.Role;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
+import rehabilitation.api.service.entity.sql.security.UserRole;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
