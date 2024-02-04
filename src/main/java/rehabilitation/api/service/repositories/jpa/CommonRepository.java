@@ -1,8 +1,6 @@
 package rehabilitation.api.service.repositories.jpa;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import rehabilitation.api.service.entity.ClientModel;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,11 +1,10 @@
 package rehabilitation.api.service.business.businessServices.abstractions;
 
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.util.List;
 
-public abstract class ModelViewService<Model extends UserModel, ModelDto> {
+public abstract class ModelViewService<ModelDto> {
 
 
     public abstract ModelDto getModelDtoByLogin(String login) throws NotFoundLoginException;

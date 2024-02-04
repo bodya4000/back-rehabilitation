@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ClientModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 
@@ -40,17 +40,15 @@ public class ClientCrudService extends ModelService<ClientModel> {
         clientRepository.delete(client);
     }
 
-    @Override
     @Transactional
-    public void addChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
+    public void addSpecialist(String clientLogin, String specialistLogin) throws NotFoundLoginException {
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         clientModel.addSpecialist(specialistModel);
     }
 
-    @Override
     @Transactional
-    public void removeChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
+    public void removeSpecialist(String clientLogin, String specialistLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
         clientModel.removeSpecialist(specialistModel);

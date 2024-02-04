@@ -1,22 +1,19 @@
 package rehabilitation.api.service.business.businessServices.specialistBusiness.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.stereotype.Service;
 import rehabilitation.api.service.business.businessUtils.MappingUtil;
 import rehabilitation.api.service.dto.SearchDto;
 import rehabilitation.api.service.dto.entities.SpecialistDto;
-import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor

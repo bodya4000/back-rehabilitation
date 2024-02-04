@@ -4,8 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import rehabilitation.api.service.entity.ReHubModel;
-import rehabilitation.api.service.repositories.jpa.CommonRepository;
+import rehabilitation.api.service.entity.sql.ReHubModel;
 
 import java.util.List;
 import java.util.Optional;

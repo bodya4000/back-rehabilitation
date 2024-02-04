@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 import rehabilitation.api.service.dto.entities.ClientDto;
 import rehabilitation.api.service.dto.entities.RehubDto;
 import rehabilitation.api.service.dto.entities.SpecialistDto;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.ReHubModel;
-import rehabilitation.api.service.entity.SpecialistModel;
+import rehabilitation.api.service.entity.sql.ClientModel;
+import rehabilitation.api.service.entity.sql.ReHubModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
 
 @Component
 public class MappingUtil {

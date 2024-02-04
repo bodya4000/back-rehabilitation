@@ -1,8 +1,6 @@
 package rehabilitation.api.service.repositories.elasticsearch;
 
-import rehabilitation.api.service.entity.SpecialistModel;
-
-import java.util.List;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
 
 public interface SpecialistSearchRepositoryCustom {
 

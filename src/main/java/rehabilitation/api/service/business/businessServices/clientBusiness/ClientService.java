@@ -12,7 +12,7 @@ import rehabilitation.api.service.business.businessServices.clientBusiness.crud.
 import rehabilitation.api.service.business.businessServices.clientBusiness.view.ClientViewService;
 import rehabilitation.api.service.dto.entities.ClientDto;
 
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 
 
@@ -48,16 +48,16 @@ public class ClientService {
     @Caching(evict = {
             @CacheEvict(value = "clients", key = "#clientLogin"),
             @CacheEvict(value = "specialists", key = "#specialistLogin")})
-    public void addChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
-        clientCrudService.addChild(clientLogin, specialistLogin);
+    public void addSpecialist(String clientLogin, String specialistLogin) throws NotFoundLoginException {
+        clientCrudService.addSpecialist(clientLogin, specialistLogin);
     }
 
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "clients", key = "#clientLogin"),
             @CacheEvict(value = "specialists", key = "#specialistLogin")})
-    public void removeChild(String clientLogin, String specialistLogin) throws NotFoundLoginException {
-        clientCrudService.removeChild(clientLogin, specialistLogin);
+    public void removeSpecialist(String clientLogin, String specialistLogin) throws NotFoundLoginException {
+        clientCrudService.removeSpecialist(clientLogin, specialistLogin);
     }
 
     @Transactional

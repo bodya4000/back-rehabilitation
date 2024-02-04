@@ -1,6 +1,7 @@
 package rehabilitation.api.service.controller;
 
 import jakarta.annotation.security.RolesAllowed;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rehabilitation.api.service.dto.entities.RehubDto;
 import rehabilitation.api.service.business.businessServices.reHubBusiness.ReHubService;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,10 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/rehub-section")
+@RequiredArgsConstructor
 public class ReHubController{
 
-
-    @Autowired
-    private ReHubService reHubService;
+    private final ReHubService reHubService;
 
     @GetMapping("/rehub")
     @RolesAllowed("ADMIN")
@@ -60,7 +60,7 @@ public class ReHubController{
             @PathVariable String rehubLogin,
             @PathVariable String specialistLogin
     ) throws NotFoundLoginException {
-        reHubService.addChild(rehubLogin, specialistLogin);
+        reHubService.addSpecialist(rehubLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -69,7 +69,7 @@ public class ReHubController{
     public ResponseEntity<Integer> removeNewSpecialist(
             @PathVariable("rehubLogin") String rehubLogin,
             @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
-        reHubService.removeChild(rehubLogin, specialistLogin);
+        reHubService.removeSpecialist(rehubLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

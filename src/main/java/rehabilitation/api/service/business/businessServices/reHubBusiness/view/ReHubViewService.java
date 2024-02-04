@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelViewService;
 import rehabilitation.api.service.business.businessUtils.MappingUtil;
 import rehabilitation.api.service.dto.entities.RehubDto;
-import rehabilitation.api.service.entity.ReHubModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ReHubModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import static rehabilitation.api.service.business.businessUtils.ModelValidationU
 
 @Service
 @RequiredArgsConstructor
-public class ReHubViewService extends ModelViewService<ReHubModel, RehubDto> {
+public class ReHubViewService extends ModelViewService<RehubDto> {
 
     private final ReHubRepository reHubRepository;
     private final MappingUtil mappingUtil;

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.specialistBusiness.crud.SpecialistCrudService;
 import rehabilitation.api.service.business.businessServices.specialistBusiness.view.SpecialistViewService;
 import rehabilitation.api.service.dto.entities.SpecialistDto;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,6 @@ public class SpecialistService{
         return specialistViewService.getModelDtoByLogin(login);
     }
 
-    /* get specialist dto by login for controller*/
     @Transactional(readOnly = true)
     public List<SpecialistDto> getAllModelView() {
         return specialistViewService.getListOfModelDto();
@@ -49,16 +48,16 @@ public class SpecialistService{
     @Caching( evict = {
             @CacheEvict(value = "specialists", key = "#specialistLogin"),
             @CacheEvict(value = "clients", key = "#clientLogin"),})
-    public void addChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
-        specialistCrudService.addChild(specialistLogin, clientLogin);
+    public void addClient(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+        specialistCrudService.addClient(specialistLogin, clientLogin);
     }
 
     @Transactional
     @Caching( evict = {
             @CacheEvict(value = "specialists", key = "#specialistLogin"),
             @CacheEvict(value = "clients", key = "#clientLogin"),})
-    public void removeChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
-        specialistCrudService.removeChild(specialistLogin, clientLogin);
+    public void removeClient(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+        specialistCrudService.removeClient(specialistLogin, clientLogin);
     }
 
 

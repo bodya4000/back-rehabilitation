@@ -1,8 +1,8 @@
 package rehabilitation.api.service.business.businessUtils;
 
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.AlreadyExistLoginException;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.AlreadyExistLoginException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.CommonRepository;
 
 public class ModelValidationUtils {

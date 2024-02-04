@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rehabilitation.api.service.business.businessServices.abstractions.ModelService;
-import rehabilitation.api.service.entity.ClientModel;
-import rehabilitation.api.service.entity.SpecialistModel;
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.BadRequestException;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.ClientModel;
+import rehabilitation.api.service.entity.sql.SpecialistModel;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.auth.BadRequestException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
 import static rehabilitation.api.service.business.businessUtils.ModelValidationUtils.*;
@@ -40,17 +40,15 @@ public class SpecialistCrudService extends ModelService<SpecialistModel> {
         specialistRepository.delete(specialist);
     }
 
-    @Override
     @Transactional
-    public void addChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+    public void addClient(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
         specialistModel.addClient(clientModel);
     }
 
-    @Override
     @Transactional
-    public void removeChild(String specialistLogin, String clientLogin) throws NotFoundLoginException {
+    public void removeClient(String specialistLogin, String clientLogin) throws NotFoundLoginException {
         SpecialistModel specialistModel = getModelIfExists(specialistLogin, specialistRepository);
         ClientModel clientModel = getModelIfExists(clientLogin, clientRepository);
         specialistModel.removeClient(clientModel);

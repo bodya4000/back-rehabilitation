@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import rehabilitation.api.service.entity.UserModel;
-import rehabilitation.api.service.exceptionHandling.exception.NotFoundLoginException;
+import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
@@ -29,10 +29,10 @@ public class UserService implements UserDetailsService {
 
         try {
             UserModel user = Stream.of(
-                            clientRepository.findByLogin(login),
-                            specialistRepository.findByLogin(login),
-                            reHubRepository.findByLogin(login),
-                            userRepository.findByLogin(login)
+                            clientRepository.findByLoginFetchRoles(login),
+                            specialistRepository.findByLoginFetchRoles(login),
+                            reHubRepository.findByLoginFetchRoles(login),
+                            userRepository.findByLoginFetchRoles(login)
                     )
                     .filter(Optional::isPresent)
                     .map(Optional::get)
