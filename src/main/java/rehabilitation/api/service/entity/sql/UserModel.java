@@ -33,7 +33,7 @@ public class UserModel {
     @Column
     private String address;
 
-    @Column
+    @Column 
     private String imgUrl;
 
     @JsonIgnoreProperties("userModel")

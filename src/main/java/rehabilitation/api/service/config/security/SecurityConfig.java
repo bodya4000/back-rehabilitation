@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import rehabilitation.api.service.business.businessServices.authBusiness.jwtBusiness.JwtFilter;
+import rehabilitation.api.service.business.businessServices.securityBusiness.jwtToken.JwtFilter;
 import rehabilitation.api.service.business.businessServices.userBusiness.UserService;
 
 
@@ -53,9 +53,7 @@ public class SecurityConfig {
                 .exceptionHandling(handling -> {
                     handling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                 })
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        // todo add to chain filter before
-        ;
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

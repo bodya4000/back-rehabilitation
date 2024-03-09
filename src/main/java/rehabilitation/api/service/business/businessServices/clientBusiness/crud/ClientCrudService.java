@@ -7,6 +7,7 @@ import rehabilitation.api.service.business.businessServices.abstractions.ModelSe
 import rehabilitation.api.service.entity.sql.ClientModel;
 import rehabilitation.api.service.entity.sql.SpecialistModel;
 import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.IllegalPropertyException;
 import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
@@ -33,7 +34,6 @@ public class ClientCrudService extends ModelService<ClientModel> {
     public void deleteModel(String login) throws NotFoundLoginException {
         ClientModel client = getModelIfExists(login, clientRepository);
 
-        /* first you need delete for specialists_clients and then for specialists */
         for (SpecialistModel specialistModel : client.getSpecialists()) {
             client.removeSpecialist(specialistModel);
         }
@@ -74,24 +74,19 @@ public class ClientCrudService extends ModelService<ClientModel> {
                         currentClient.setContactInformation((String) value);
                     }
                     break;
-                case "email":
+                case "imgUrl":
                     if (value instanceof String) {
-                        currentClient.setEmail((String) value);
+                        currentClient.setImgUrl((String) value);
+                    }
+                    break;
+                case "address":
+                    if (value instanceof String) {
+                        currentClient.setAddress((String) value);
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown key " + key);
+                    throw new IllegalPropertyException(key);
             }
         });
-    }
-
-    private static boolean isNumeric(Object str){
-        try {
-            // Attempt to parse the string to an integer
-            Integer.parseInt((String) str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }

@@ -8,6 +8,7 @@ import rehabilitation.api.service.entity.sql.ClientModel;
 import rehabilitation.api.service.entity.sql.SpecialistModel;
 import rehabilitation.api.service.entity.sql.UserModel;
 import rehabilitation.api.service.exceptionHandling.exception.auth.BadRequestException;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.IllegalPropertyException;
 import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ClientRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
@@ -36,6 +37,9 @@ public class SpecialistCrudService extends ModelService<SpecialistModel> {
         /* first you need delete for specialists_clients and then for specialists */
         for (ClientModel client : specialist.getClients()) {
             client.removeSpecialist(specialist);
+        }
+        if (specialist.getReHub() != null) {
+            specialist.getReHub().removeSpecialist(specialist);
         }
         specialistRepository.delete(specialist);
     }
@@ -69,12 +73,28 @@ public class SpecialistCrudService extends ModelService<SpecialistModel> {
                         currentSpecialist.setLastName((String) value);
                     }
                     break;
+                case "contactInformation":
+                    if (value instanceof String) {
+                        currentSpecialist.setContactInformation((String) value);
+                    }
+                    break;
+                case "imgUrl":
+                    if (value instanceof String) {
+                        currentSpecialist.setImgUrl((String) value);
+                    }
+                    break;
+                case "address":
+                    if (value instanceof String) {
+                        currentSpecialist.setAddress((String) value);
+                    }
+                    break;
                 case "city":
                     if (value instanceof String) {
                         currentSpecialist.setCity((String) value);
                     }
                     break;
                 case "age":
+                    if (value instanceof Integer) currentSpecialist.setAge((int) value);
                     if (value instanceof String) {
                         if (isNumeric(value)) {
                             currentSpecialist.setAge((int) value);
@@ -88,23 +108,13 @@ public class SpecialistCrudService extends ModelService<SpecialistModel> {
                         currentSpecialist.setSpeciality((String) value);
                     }
                     break;
-                case "contactInformation":
-                    if (value instanceof String) {
-                        currentSpecialist.setContactInformation((String) value);
-                    }
-                    break;
-                case "email":
-                    if (value instanceof String) {
-                        currentSpecialist.setEmail((String) value);
-                    }
-                    break;
                 case "description":
                     if (value instanceof String) {
                         currentSpecialist.setDescription((String) value);
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown key " + key);
+                    throw new IllegalPropertyException(key);
             }
         });
     }

@@ -1,9 +1,6 @@
 package rehabilitation.api.service.entity.mongo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Document
+@EqualsAndHashCode(of = {"id", "content", "chatId", "senderLogin", "recipientLogin"})
 public class ChatMessage {
     @MongoId
     private String id;
@@ -22,4 +20,5 @@ public class ChatMessage {
     private String recipientLogin;
     private String content;
     private LocalDate timestamp;
+
 }

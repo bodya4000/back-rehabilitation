@@ -8,16 +8,12 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.*;
 
-@ToString(exclude = "specialists")
 @Setter
 @Getter
 @AllArgsConstructor
 @Table(name = "clients")
 @Entity
 public class ClientModel extends UserModel {
-    @Setter(AccessLevel.PRIVATE)
-    private String mongoId;
-
     @Column(nullable = true)
     private String firstName;
 

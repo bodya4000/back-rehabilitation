@@ -1,14 +1,13 @@
 package rehabilitation.api.service.entity.mongo;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -23,4 +22,17 @@ public class ChatUser {
     private String lastName;
     private Set<ChatUser> contacts = new HashSet<>();
     private Set<ChatUser> blockedContacts = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChatUser chatUser = (ChatUser) o;
+        return Objects.equals(login, chatUser.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(login);
+    }
 }

@@ -24,16 +24,16 @@ public class ReHubController{
 
     @GetMapping("/rehub")
     @RolesAllowed("ADMIN")
-    public List<RehubDto> getAllReHubs(){
-        return reHubService.getAllModelView();
+    public ResponseEntity<List<RehubDto>> getAllReHubs(){
+        return ResponseEntity.ok(reHubService.getAllModelView());
     }
 
     @GetMapping("/rehub/{login}")
-    public RehubDto getByLogin(@PathVariable("login") String login) throws NotFoundLoginException {
-        return reHubService.getModelDtoByLogin(login);
+    public ResponseEntity<RehubDto> getByLogin(@PathVariable("login") String login) throws NotFoundLoginException {
+        return ResponseEntity.ok(reHubService.getModelDtoByLogin(login));
     }
 
-    @PatchMapping("{login}")
+    @PatchMapping("/rehub/{login}")
     @PreAuthorize("#login == authentication.principal")
     public ResponseEntity<String> update(
             @PathVariable("login") String login,
@@ -47,11 +47,11 @@ public class ReHubController{
 
     @DeleteMapping("/rehub/{login}")
     @RolesAllowed("ADMIN")
-    public ResponseEntity<Integer> delete(@PathVariable("login") String login) throws NotFoundLoginException {
+    public ResponseEntity<String> delete(@PathVariable("login") String login) throws NotFoundLoginException {
         reHubService.deleteModel(login);
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+                .status(HttpStatus.OK)
+                .body("rehub deleted");
     }
 
     @PostMapping("/{rehubLogin}/specialist/{specialistLogin}")

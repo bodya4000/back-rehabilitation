@@ -27,7 +27,6 @@ public class SpecialistController {
     private final SearchSpecialistService searchSpecialistService;
 
     @GetMapping("/specialist")
-    @RolesAllowed("ADMIN")
     public List<SpecialistDto> getAllSpecialists() {
         return specialistService.getAllModelView();
     }
@@ -51,8 +50,9 @@ public class SpecialistController {
 
     @DeleteMapping("/specialist/{login}")
     @RolesAllowed("ADMIN")
-    public void deleteSpecialist(@PathVariable("login") String login) throws NotFoundLoginException {
+    public ResponseEntity<String> deleteSpecialist(@PathVariable("login") String login) throws NotFoundLoginException {
         specialistService.deleteModel(login);
+        return ResponseEntity.ok("specialist deleted");
     }
 
     @PostMapping("/{specialistLogin}/client/{clientLogin}")

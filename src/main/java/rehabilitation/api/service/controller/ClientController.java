@@ -47,7 +47,6 @@ public class ClientController {
 
     @DeleteMapping("/client/{login}")
     @RolesAllowed("ADMIN")
-    @PreAuthorize("#login == authentication.principal.username")
     public ResponseEntity<String> deleteClient(@PathVariable("login") String login) throws NotFoundLoginException {
         clientService.deleteModel(login);
         return ResponseEntity.status(HttpStatus.OK).body("client deleted");
@@ -56,7 +55,7 @@ public class ClientController {
 
 
     @PostMapping("/{clientLogin}/specialist/{specialistLogin}")
-    @PreAuthorize("#clientLogin == authentication.principal.username")
+    @PreAuthorize("#clientLogin == authentication.principal")
     public ResponseEntity<Integer> addSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
         clientService.addSpecialist(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -64,7 +63,7 @@ public class ClientController {
 
 
     @DeleteMapping("/{clientLogin}/specialist/{specialistLogin}")
-    @PreAuthorize("#clientLogin == authentication.principal.username")
+    @PreAuthorize("#clientLogin == authentication.principal")
     public ResponseEntity<Integer> removeSpecialist(@PathVariable("clientLogin") String clientLogin, @PathVariable("specialistLogin") String specialistLogin) throws NotFoundLoginException {
         clientService.removeSpecialist(clientLogin, specialistLogin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

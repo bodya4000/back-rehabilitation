@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SpecialistRepository extends JpaRepository<SpecialistModel, Long>, CommonRepository<SpecialistModel> {
-    // todo its important to fetch child objects to avoid extra queries to db
 
     @Override
     @Query("select s from SpecialistModel s " +

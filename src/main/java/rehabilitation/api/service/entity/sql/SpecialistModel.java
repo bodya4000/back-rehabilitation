@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.HashSet;
 import java.util.List;

@@ -7,6 +7,7 @@ import rehabilitation.api.service.business.businessServices.abstractions.ModelSe
 import rehabilitation.api.service.entity.sql.ReHubModel;
 import rehabilitation.api.service.entity.sql.SpecialistModel;
 import rehabilitation.api.service.entity.sql.UserModel;
+import rehabilitation.api.service.exceptionHandling.exception.buisness.IllegalPropertyException;
 import rehabilitation.api.service.exceptionHandling.exception.buisness.NotFoundLoginException;
 import rehabilitation.api.service.repositories.jpa.ReHubRepository;
 import rehabilitation.api.service.repositories.jpa.SpecialistRepository;
@@ -59,11 +60,6 @@ public class ReHubCrudService extends ModelService<ReHubModel> {
         var currentReHub = (ReHubModel) currentUser;
         updates.forEach((key, value) -> {
             switch (key) {
-                case "name":
-                    if (value instanceof String) {
-                        currentReHub.setName((String) value);
-                    }
-                    break;
                 case "imgUrl":
                     if (value instanceof String) {
                         currentReHub.setImgUrl((String) value);
@@ -74,13 +70,23 @@ public class ReHubCrudService extends ModelService<ReHubModel> {
                         currentReHub.setContactInformation((String) value);
                     }
                     break;
-                case "email":
+                case "address":
                     if (value instanceof String) {
-                        currentReHub.setEmail((String) value);
+                        currentReHub.setAddress((String) value);
+                    }
+                    break;
+                case "name":
+                    if (value instanceof String) {
+                        currentReHub.setName((String) value);
+                    }
+                    break;
+                case "city":
+                    if (value instanceof String) {
+                        currentReHub.setCity((String) value);
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown key " + key);
+                    throw new IllegalPropertyException(key);
             }
         });
     }

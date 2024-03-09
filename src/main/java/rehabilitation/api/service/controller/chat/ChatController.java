@@ -1,6 +1,7 @@
 package rehabilitation.api.service.controller.chat;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -34,7 +35,9 @@ public class ChatController {
     @GetMapping("/messages/{senderLogin}/{recipientLogin}")
     public ResponseEntity<List<ChatMessage>> getChatMessages(
             @PathVariable String senderLogin,
-            @PathVariable String recipientLogin) throws ChatNotFoundException {
+            @PathVariable String recipientLogin,
+            Pageable pageable
+            ) throws ChatNotFoundException {
         return ResponseEntity.ok(
                 chatRoomService.findMessagesInChatRoom(senderLogin, recipientLogin)
         );

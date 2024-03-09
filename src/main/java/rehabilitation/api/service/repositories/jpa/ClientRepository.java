@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ClientRepository extends JpaRepository<ClientModel, String>, CommonRepository<ClientModel> {
 
-    // todo its important to fetch child objects to avoid extra queries to db
     @Query("select distinct c from ClientModel c left join fetch c.specialists")
     List<ClientModel> findAllBy();
 

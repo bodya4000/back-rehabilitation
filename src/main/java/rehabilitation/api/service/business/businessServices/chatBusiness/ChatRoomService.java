@@ -19,7 +19,9 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public List<ChatMessage> findMessagesInChatRoom(String senderLogin, String recipientLogin) throws ChatNotFoundException {
+    public List<ChatMessage> findMessagesInChatRoom(
+            String senderLogin, String recipientLogin
+    ) throws ChatNotFoundException {
         var chatRoom = chatRoomRepository.findChatRoomBySenderLoginAndReceiverLogin(senderLogin, recipientLogin)
                 .orElseThrow(ChatNotFoundException::new);
         return chatMessageRepository.findChatMessageByChatId(chatRoom.getChatId());

@@ -32,8 +32,6 @@ public class ModelValidationUtils {
             String email,
             CommonRepository<AnyModel> repository) throws AlreadyExistLoginException {
 
-        // todo change api for this method
-
         if (repository.existsByLogin(login)) {
             throw new AlreadyExistLoginException(login);
         }

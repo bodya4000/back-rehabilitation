@@ -1,9 +1,6 @@
 package rehabilitation.api.service.entity.mongo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -12,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
+@Builder
+@EqualsAndHashCode(of = {"id"})
 public class ChatRoom {
     @MongoId
     private String id;
